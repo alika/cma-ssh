@@ -10,8 +10,6 @@ import (
 	_ "github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger/options"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -26,22 +24,24 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+// ClusterStatus
+// Specifies current cluster state.
 type ClusterStatus int32
 
 const (
 	// Not set
 	ClusterStatus_STATUS_UNSPECIFIED ClusterStatus = 0
-	// The PROVISIONING state indicates the cluster is being created.
+	// The cluster is being created.
 	ClusterStatus_PROVISIONING ClusterStatus = 1
-	// The RUNNING state indicates the cluster has been created and is fully usable.
+	// The cluster has been created and is fully usable.
 	ClusterStatus_RUNNING ClusterStatus = 2
-	// The RECONCILING state indicates that some work is actively being done on the cluster, such as upgrading the master or node software.
+	// Some work is actively being done on the cluster, such as upgrading the master or node software.
 	ClusterStatus_RECONCILING ClusterStatus = 3
-	// The STOPPING state indicates the cluster is being deleted
+	// The cluster is being deleted
 	ClusterStatus_STOPPING ClusterStatus = 4
-	// The ERROR state indicates the cluster may be unusable
+	// The cluster may be unusable
 	ClusterStatus_ERROR ClusterStatus = 5
-	// The DEGRADED state indicates the cluster requires user action to restore full functionality
+	// The cluster requires user action to restore full functionality
 	ClusterStatus_DEGRADED ClusterStatus = 6
 )
 
@@ -73,6 +73,7 @@ func (ClusterStatus) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_00212fb1f9d3bf1c, []int{0}
 }
 
+// CreateClusterMsg
 type CreateClusterMsg struct {
 	// Name of the cluster to be provisioned
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -1909,44 +1910,6 @@ type ClusterServer interface {
 	GetUpgradeClusterInformation(context.Context, *GetUpgradeClusterInformationMsg) (*GetUpgradeClusterInformationReply, error)
 	// Will attempt to upgrade a cluster
 	UpgradeCluster(context.Context, *UpgradeClusterMsg) (*UpgradeClusterReply, error)
-}
-
-// UnimplementedClusterServer can be embedded to have forward compatible implementations.
-type UnimplementedClusterServer struct {
-}
-
-func (*UnimplementedClusterServer) CreateCluster(ctx context.Context, req *CreateClusterMsg) (*CreateClusterReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateCluster not implemented")
-}
-func (*UnimplementedClusterServer) GetCluster(ctx context.Context, req *GetClusterMsg) (*GetClusterReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetCluster not implemented")
-}
-func (*UnimplementedClusterServer) DeleteCluster(ctx context.Context, req *DeleteClusterMsg) (*DeleteClusterReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteCluster not implemented")
-}
-func (*UnimplementedClusterServer) GetClusterList(ctx context.Context, req *GetClusterListMsg) (*GetClusterListReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetClusterList not implemented")
-}
-func (*UnimplementedClusterServer) GetClusterNodesStatus(ctx context.Context, req *GetClusterNodesStatusMsg) (*GetClusterNodesStatusReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetClusterNodesStatus not implemented")
-}
-func (*UnimplementedClusterServer) GetVersionInformation(ctx context.Context, req *GetVersionMsg) (*GetVersionReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetVersionInformation not implemented")
-}
-func (*UnimplementedClusterServer) AddNodePool(ctx context.Context, req *AddNodePoolMsg) (*AddNodePoolReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AddNodePool not implemented")
-}
-func (*UnimplementedClusterServer) DeleteNodePool(ctx context.Context, req *DeleteNodePoolMsg) (*DeleteNodePoolReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteNodePool not implemented")
-}
-func (*UnimplementedClusterServer) ScaleNodePool(ctx context.Context, req *ScaleNodePoolMsg) (*ScaleNodePoolReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ScaleNodePool not implemented")
-}
-func (*UnimplementedClusterServer) GetUpgradeClusterInformation(ctx context.Context, req *GetUpgradeClusterInformationMsg) (*GetUpgradeClusterInformationReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUpgradeClusterInformation not implemented")
-}
-func (*UnimplementedClusterServer) UpgradeCluster(ctx context.Context, req *UpgradeClusterMsg) (*UpgradeClusterReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpgradeCluster not implemented")
 }
 
 func RegisterClusterServer(s *grpc.Server, srv ClusterServer) {
