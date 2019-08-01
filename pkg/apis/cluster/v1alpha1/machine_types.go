@@ -18,7 +18,7 @@ limitations under the License.
 package v1alpha1
 
 import (
-	"github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/common"
+	"github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/common"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )

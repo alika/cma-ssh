@@ -1,10 +1,10 @@
 name: debug
-description: local debug of cma-ssh using kind (kubernetes in docker)
+description: local debug of ims-kaas using kind (kubernetes in docker)
 inputs:
   name:
     string:
       description: name of kind cluster
-      default: cma-ssh-debug-cluster
+      default: ims-kaas-debug-cluster
   dockerSocket:
     socket:
       description: access to docker on node (ex. /var/run/docker.sock)
@@ -13,7 +13,7 @@ inputs:
       description: the ip address of the machine running the op (ex. 192.168.1.129
   srcDir:
     dir:
-      description: directory containing cma-ssh source code
+      description: directory containing ims-kaas source code
       default: .
 run:
   serial:

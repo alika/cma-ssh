@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	clusterv1alpha1 "github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/v1alpha1"
-	"github.com/samsung-cnct/cma-ssh/pkg/maas"
-	"github.com/samsung-cnct/cma-ssh/pkg/util"
+	clusterv1alpha1 "github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/v1alpha1"
+	"github.com/samsung-cnct/ims-kaas/pkg/maas"
+	"github.com/samsung-cnct/ims-kaas/pkg/util"
 
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"

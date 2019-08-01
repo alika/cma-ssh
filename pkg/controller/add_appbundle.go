@@ -17,7 +17,7 @@ limitations under the License.
 package controller
 
 import (
-	"github.com/samsung-cnct/cma-ssh/pkg/controller/appbundle"
+	"github.com/samsung-cnct/ims-kaas/pkg/controller/appbundle"
 )
 
 func init() {

@@ -17,7 +17,7 @@ limitations under the License.
 package apis
 
 import (
-	"github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/v1alpha1"
+	"github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/v1alpha1"
 )
 
 func init() {

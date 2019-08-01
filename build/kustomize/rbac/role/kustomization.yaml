@@ -1,4 +1,4 @@
-namePrefix: '{{ include "cma-ssh.name" . }}-'
+namePrefix: '{{ include "ims-kaas.name" . }}-'
 
 resources:
 - base/rbac_role.yaml

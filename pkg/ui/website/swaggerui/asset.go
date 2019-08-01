@@ -3,10 +3,11 @@
 package swaggerui
 
 import (
-	"github.com/samsung-cnct/cma-ssh/pkg/util"
 	"go/build"
 	"log"
 	"net/http"
+
+	"github.com/samsung-cnct/ims-kaas/pkg/util"
 )
 
 func importPathToDir(importPath string) string {
@@ -18,5 +19,5 @@ func importPathToDir(importPath string) string {
 }
 
 var SwaggerUI util.ZeroModTimeFileSystem = util.ZeroModTimeFileSystem{Source: http.Dir(
-	importPathToDir("github.com/samsung-cnct/cma-ssh/third_party/swagger-ui"),
+	importPathToDir("github.com/samsung-cnct/ims-kaas/third_party/swagger-ui"),
 )}

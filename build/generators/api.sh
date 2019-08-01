@@ -15,8 +15,8 @@ export PATH=${PROJECT_DIRECTORY}/bin:$PATH
 "${PROJECT_DIRECTORY}/bin/protoc/bin/protoc" "${PROJECT_DIRECTORY}/api/api.proto" \
   -I "${PROJECT_DIRECTORY}/api" \
   -I "${PROJECT_DIRECTORY}/api/third_party/" \
-  --go_out=plugins=grpc:"${PROJECT_DIRECTORY}/" \
-  --grpc-gateway_out=logtostderr=true:"${PROJECT_DIRECTORY}" \
+  --go_out=plugins=grpc,paths=source_relative:pkg/generated/api \
+  --grpc-gateway_out=logtostderr=true,paths=source_relative:pkg/generated/api \
   --swagger_out=logtostderr=true:"${PROJECT_DIRECTORY}/${SWAGGER_DESTINATION}" \
   --doc_out "${PROJECT_DIRECTORY}/docs/api-generated" \
   --doc_opt=markdown,api.md

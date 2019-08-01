@@ -3,16 +3,16 @@ kind: 'ClusterRoleBinding'
 metadata:
   name: rbac-rolebinding
   labels:
-    helm.sh/chart: '{{include "cma-ssh.chart" .}}'
-    app.kubernetes.io/name: '{{include "cma-ssh.name" .}}'
+    helm.sh/chart: '{{include "ims-kaas.chart" .}}'
+    app.kubernetes.io/name: '{{include "ims-kaas.name" .}}'
     app.kubernetes.io/managed-by: '{{.Release.Service}}'
     app.kubernetes.io/instance: '{{.Release.Name}}'
     app.kubernetes.io/version: '{{.Chart.AppVersion | replace "+" "_" | trunc 63}}'
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: '{{ include "cma-ssh.name" . }}-rbac-role'
+  name: '{{ include "ims-kaas.name" . }}-rbac-role'
 subjects:
 - kind: ServiceAccount
   namespace: '{{ .Release.Namespace}}'
-  name: '{{ include "cma-ssh.name" . }}'
+  name: '{{ include "ims-kaas.name" . }}'

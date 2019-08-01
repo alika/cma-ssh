@@ -3,7 +3,7 @@ package machine
 import (
 	"strings"
 
-	"github.com/samsung-cnct/cma-ssh/pkg/maas"
+	"github.com/samsung-cnct/ims-kaas/pkg/maas"
 )
 
 type image struct {

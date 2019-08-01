@@ -18,7 +18,7 @@ syntax = "proto3";
 
 package cnct.kaas.api;
 
-option go_package = "pkg/generated/api;api";
+option go_package = "github.com/samsung-cnct/ims-kaas/pkg/generated/api;api";
 
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
@@ -30,12 +30,12 @@ option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
     version: "v0.1.0";
     contact: {
         name: "Samsung CNCT";
-        url: "https://github.com/samsung-cnct/cma-ssh";
+        url: "https://github.com/samsung-cnct/ims-kaas";
         email: "samsung.cloudnative@gmail.com";
     };
   };
   external_docs: {
-    url: "https://github.com/samsung-cnct/cma-ssh";
+    url: "https://github.com/samsung-cnct/ims-kaas";
     description: "More about Cluster Manager API SSH provider";
   }
   schemes: HTTPS;

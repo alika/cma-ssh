@@ -6,7 +6,7 @@
 # Uncomment this if testing the cma api locally
 #export CLUSTER_API=http://localhost:9050
 
-# Uncomment this if testing the cma-ssh api locally
+# Uncomment this if testing the ims-kaas api locally
 export CLUSTER_API=http://localhost:9020
 
 export CMA_CALLBACK_URL=https://webhook.site/#/15a7f31c-5b57-41fc-bd70-a8dec0f56442

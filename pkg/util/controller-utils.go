@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/common"
-	clusterv1alpha1 "github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/v1alpha1"
+	"github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/common"
+	clusterv1alpha1 "github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/v1alpha1"
 	"k8s.io/apimachinery/pkg/labels"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -15,7 +15,7 @@ import (
 // TODO: in future set this through ldflags in make
 const kubernetesVersions = "1.12.6 1.13.4"
 
-// KubernetesVersions() returns the list of all kubernetes versions cma-ssh supports.
+// KubernetesVersions() returns the list of all kubernetes versions ims-kaas supports.
 func KubernetesVersions() []string {
 	return strings.Split(kubernetesVersions, " ")
 }

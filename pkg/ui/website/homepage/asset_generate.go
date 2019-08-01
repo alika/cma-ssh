@@ -3,7 +3,7 @@
 package main
 
 import (
-	"github.com/samsung-cnct/cma-ssh/pkg/ui/website/homepage"
+	"github.com/samsung-cnct/ims-kaas/pkg/ui/website/homepage"
 	"github.com/shurcooL/vfsgen"
 	"log"
 )

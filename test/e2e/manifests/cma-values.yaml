@@ -22,5 +22,5 @@ helpers:
       insecure: false
    ssh:
       enabled: true
-      endpoint: cma-ssh:80
+      endpoint: ims-kaas:80
       insecure: true

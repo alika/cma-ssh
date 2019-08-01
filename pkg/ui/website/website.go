@@ -4,10 +4,10 @@ import (
 	"mime"
 	"net/http"
 
-	"github.com/samsung-cnct/cma-ssh/pkg/ui/website/api"
-	"github.com/samsung-cnct/cma-ssh/pkg/ui/website/homepage"
-	"github.com/samsung-cnct/cma-ssh/pkg/ui/website/swaggerjson"
-	"github.com/samsung-cnct/cma-ssh/pkg/ui/website/swaggerui"
+	"github.com/samsung-cnct/ims-kaas/pkg/ui/website/api"
+	"github.com/samsung-cnct/ims-kaas/pkg/ui/website/homepage"
+	"github.com/samsung-cnct/ims-kaas/pkg/ui/website/swaggerjson"
+	"github.com/samsung-cnct/ims-kaas/pkg/ui/website/swaggerui"
 )
 
 func AddWebsiteHandles(mux *http.ServeMux) {

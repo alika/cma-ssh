@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/samsung-cnct/cma-ssh/pkg/util"
+	"github.com/samsung-cnct/ims-kaas/pkg/util"
 )
 
 func importPathToDir(importPath string) string {
@@ -19,5 +19,5 @@ func importPathToDir(importPath string) string {
 }
 
 var Homepage = util.ZeroModTimeFileSystem{Source: http.Dir(
-	importPathToDir("github.com/samsung-cnct/cma-ssh/assets/homepage"),
+	importPathToDir("github.com/samsung-cnct/ims-kaas/assets/homepage"),
 )}

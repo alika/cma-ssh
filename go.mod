@@ -1,4 +1,4 @@
-module github.com/samsung-cnct/cma-ssh
+module github.com/samsung-cnct/ims-kaas
 
 go 1.12
 

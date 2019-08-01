@@ -28,7 +28,7 @@ build/kustomize/rbac/rolebinding/base/
 
 # editor and IDE paraphernalia
 *.out
-/cma-ssh
+/ims-kaas
 .idea/
 dist/
 Go_build_*

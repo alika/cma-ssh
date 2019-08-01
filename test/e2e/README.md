@@ -1,34 +1,34 @@
 # Purpose
 
-The e2e tests are used to test end to end functionality of the cma-ssh api.  The cms-ssh api is the primary endpoint
-for cma-ssh functionality, and the cluster-manager-api(cma) api provides an end user endpoint to include callbacks
-and access to other providers.  There are scripts here to test both api endpoints (cma, and cma-ssh).
+The e2e tests are used to test end to end functionality of the ims-kaas api.  The cms-ssh api is the primary endpoint
+for ims-kaas functionality, and the cluster-manager-api(cma) api provides an end user endpoint to include callbacks
+and access to other providers.  There are scripts here to test both api endpoints (cma, and ims-kaas).
 
 # Developer Context
 
-When making changes to cma-ssh, the developer and possibly reviewer should run the `full-test-cma-ssh.sh` script which will e2e test the cma-ssh api.
+When making changes to ims-kaas, the developer and possibly reviewer should run the `full-test-ims-kaas.sh` script which will e2e test the ims-kaas api.
 
-# How to run `full-test-cma-ssh.sh`
+# How to run `full-test-ims-kaas.sh`
 
 ```bash
-# create a k8s cluster to use for cma-ssh
+# create a k8s cluster to use for ims-kaas
 minikube start
 kubectl create clusterrolebinding superpowers --clusterrole=cluster-admin --user=system:serviceaccount:kube-system:default
 kubectl create rolebinding superpowers --clusterrole=cluster-admin --user=system:serviceaccount:kube-system:default
 kubectl apply -f crd
 
-# build and run cma-ssh
-cd $GOPATH/src/github.com/samsung-cnct/cma-ssh
-go1.12.4 build -o cma-ssh cmd/cma-ssh/main.go
-MAAS_API_URL=http://192.168.2.24:5240/MAAS MAAS_API_VERSION_KEY=2.0 MAAS_API_KEY=<your maas key> ./cma-ssh --logtostderr
+# build and run ims-kaas
+cd $GOPATH/src/github.com/samsung-cnct/ims-kaas
+go1.12.4 build -o ims-kaas cmd/ims-kaas/main.go
+MAAS_API_URL=http://192.168.2.24:5240/MAAS MAAS_API_VERSION_KEY=2.0 MAAS_API_KEY=<your maas key> ./ims-kaas --logtostderr
 
 # run the e2e script
-cd $GOPATH/src/github.com/samsung-cnct/cma-ssh/test/e2e
+cd $GOPATH/src/github.com/samsung-cnct/ims-kaas/test/e2e
 source ./testEnvs.sh
-./full-test-cma-ssh.sh
+./full-test-ims-kaas.sh
 
 # Look at test output and final status
-full-test-cma-ssh PASSED
+full-test-ims-kaas PASSED
 
 ```
 
@@ -49,16 +49,16 @@ cluster-manager-api.
 cd $GOPATH/src/github.com/samsung-cnct/cluster-manager-api
 helm install deployments/helm/cluster-manager-api --name cma --set helpers.ssh.enabled=true
 
-# install cma-ssh
-cd $GOPATH/src/github.com/samsung-cnct/cma-ssh
-vi deployments/helm/cma-ssh/values.yaml  - to add maas key
-helm install --name cma-ssh deployments/helm/cma-ssh/
+# install ims-kaas
+cd $GOPATH/src/github.com/samsung-cnct/ims-kaas
+vi deployments/helm/ims-kaas/values.yaml  - to add maas key
+helm install --name ims-kaas deployments/helm/ims-kaas/
 
 # make sure cluster-manager-api service is accessible (NodePort, or ingress)
 kubectl get svc
 
 # run full-test.sh
-cd $GOPATH/src/github.com/samsung-cnct/cma-ssh/test/e2e
+cd $GOPATH/src/github.com/samsung-cnct/ims-kaas/test/e2e
 vi testEnvs.sh - modify CLUSTER_API to point to cma service
 source ./testEnvs.sh
 ./full-test.sh
@@ -83,7 +83,7 @@ This set of tests using the Cluster Manager API pipeline through CMA SSH, which 
 
 ## Sequence of the tests
 (FIX UP - WIP)
-1.  create a client cluster via a parent CMA-SSH helper:
+1.  create a client cluster via a parent ims-kaas helper:
     `create-cluster.sh`
 2.  get the kubeconfig for the client cluster from the parent cluster
     K8S API `get-kubeconfig()` in `full-test.sh`

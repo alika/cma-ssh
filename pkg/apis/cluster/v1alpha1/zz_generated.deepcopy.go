@@ -20,7 +20,7 @@ limitations under the License.
 package v1alpha1
 
 import (
-	common "github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/common"
+	common "github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/common"
 	v1 "k8s.io/api/core/v1"
 	runtime "k8s.io/apimachinery/pkg/runtime"
 )

@@ -37,9 +37,9 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
-	"github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/common"
-	clusterv1alpha1 "github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/v1alpha1"
-	"github.com/samsung-cnct/cma-ssh/pkg/cert"
+	"github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/common"
+	clusterv1alpha1 "github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/v1alpha1"
+	"github.com/samsung-cnct/ims-kaas/pkg/cert"
 )
 
 var log = logf.Log.WithName("CnctCluster-controller")

@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/samsung-cnct/cma-ssh/internal/apiserver"
-	pb "github.com/samsung-cnct/cma-ssh/pkg/generated/api"
-	"github.com/samsung-cnct/cma-ssh/pkg/ui/website"
+	"github.com/samsung-cnct/ims-kaas/internal/apiserver"
+	pb "github.com/samsung-cnct/ims-kaas/pkg/generated/api"
+	"github.com/samsung-cnct/ims-kaas/pkg/ui/website"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/soheilhy/cmux"

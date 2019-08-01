@@ -18,10 +18,9 @@ package appbundle
 
 import (
 	"context"
+	"time"
+
 	"github.com/pkg/errors"
-	addonsv1alpha1 "github.com/samsung-cnct/cma-ssh/pkg/apis/addons/v1alpha1"
-	"github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/common"
-	clusterv1alpha1 "github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -34,7 +33,10 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	logf "sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/source"
-	"time"
+
+	addonsv1alpha1 "github.com/samsung-cnct/ims-kaas/pkg/apis/addons/v1alpha1"
+	"github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/common"
+	clusterv1alpha1 "github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/v1alpha1"
 )
 
 var log = logf.Log.WithName("app bundle controller")

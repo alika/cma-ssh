@@ -4,7 +4,7 @@ inputs:
   name:
     string:
       description: name of kind cluster
-      default: cma-ssh-debug-cluster
+      default: ims-kaas-debug-cluster
   dockerSocket:
     socket:
       description: access to docker on node (ex. /var/run/docker.sock)

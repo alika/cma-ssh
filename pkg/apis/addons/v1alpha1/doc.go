@@ -17,7 +17,7 @@ limitations under the License.
 // Package v1alpha1 contains API Schema definitions for the addons v1alpha1 API group
 // +k8s:openapi-gen=true
 // +k8s:deepcopy-gen=package,register
-// +k8s:conversion-gen=github.com/samsung-cnct/cma-ssh/pkg/apis/addons
+// +k8s:conversion-gen=github.com/samsung-cnct/ims-kaas/pkg/apis/addons
 // +k8s:defaulter-gen=TypeMeta
 // +groupName=addons.cnct.sds.samsung.com
 package v1alpha1

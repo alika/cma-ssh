@@ -3,9 +3,11 @@
 package main
 
 import (
-	"github.com/samsung-cnct/cma-ssh/pkg/ui/website/swaggerui"
-	"github.com/shurcooL/vfsgen"
 	"log"
+
+	"github.com/shurcooL/vfsgen"
+
+	"github.com/samsung-cnct/ims-kaas/pkg/ui/website/swaggerui"
 )
 
 func main() {

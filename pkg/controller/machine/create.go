@@ -21,11 +21,11 @@ import (
 	"k8s.io/client-go/tools/record"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/common"
-	clusterv1alpha1 "github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/v1alpha1"
-	"github.com/samsung-cnct/cma-ssh/pkg/cert"
-	"github.com/samsung-cnct/cma-ssh/pkg/maas"
-	"github.com/samsung-cnct/cma-ssh/pkg/util"
+	"github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/common"
+	clusterv1alpha1 "github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/v1alpha1"
+	"github.com/samsung-cnct/ims-kaas/pkg/cert"
+	"github.com/samsung-cnct/ims-kaas/pkg/maas"
+	"github.com/samsung-cnct/ims-kaas/pkg/util"
 )
 
 const InstanceTypeNodeLabelKey = "beta.kubernetes.io/instance-type="
@@ -235,7 +235,7 @@ func createBootstrapToken(clientset *kubernetes.Clientset, tokenID, tokenSecret 
 		},
 		Type: corev1.SecretTypeBootstrapToken,
 		Data: map[string][]byte{
-			"description":                    []byte("Bootstrap token created by cma-ssh"),
+			"description":                    []byte("Bootstrap token created by ims-kaas"),
 			"token-id":                       []byte(tokenID),
 			"token-secret":                   []byte(tokenSecret),
 			"expiration":                     []byte(time.Now().Add(1 * time.Hour).Format(time.RFC3339)),

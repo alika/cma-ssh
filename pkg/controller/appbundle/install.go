@@ -2,7 +2,7 @@ package appbundle
 
 import (
 	"fmt"
-	addonsv1alpha1 "github.com/samsung-cnct/cma-ssh/pkg/apis/addons/v1alpha1"
+	addonsv1alpha1 "github.com/samsung-cnct/ims-kaas/pkg/apis/addons/v1alpha1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbac "k8s.io/api/rbac/v1"

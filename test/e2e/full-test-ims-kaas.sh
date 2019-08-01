@@ -22,7 +22,7 @@ get_kubeconfig()
 
 
 test_provisioning(){
-  provisioning=$("${__dir}/cma-ssh-create")
+  provisioning=$("${__dir}/ims-kaas-create")
   echo "create output:"
   echo $provisioning
   if echo "$provisioning" | grep -o PROVISIONING; then
@@ -39,7 +39,7 @@ test_running()
   # wait up to 20 minutes for cluster RUNNING
   for tries in $(seq 1 120); do
 
-    if [[ $("${__dir}"/cma-ssh-get | jq -Mr '.cluster.status') == RUNNING ]]; then
+    if [[ $("${__dir}"/ims-kaas-get | jq -Mr '.cluster.status') == RUNNING ]]; then
       echo "Cluster is RUNNING"
       echo "elapsed seconds=$(( 10 * $tries ))"
       return 0
@@ -62,7 +62,7 @@ test_ready()
     # check for not ready
     if echo "$nodes" | grep -qo NotReady; then
       echo "Node(s) NotReady"
-    # there should be 2 ready nodes in the cma-ssh-create  
+    # there should be 2 ready nodes in the ims-kaas-create
     elif [[ $(echo "$nodes" | grep -o Ready | wc -l) -ge 2 ]]; then
       echo "All Nodes Are Ready"
       rm "$CLIENT_KUBECONFIG"
@@ -78,7 +78,7 @@ test_ready()
 }
 
 test_delete(){
-  delete=$("${__dir}/cma-ssh-delete")
+  delete=$("${__dir}/ims-kaas-delete")
   echo "delete output:"
   echo $delete
 
@@ -130,7 +130,7 @@ main()
     echo "test_delete PASSED"
   fi
 
-  echo "full-test-cma-ssh $fullstatus"
+  echo "full-test-ims-kaas $fullstatus"
   if [ "$fullstatus" == "FAILED" ]; then
     exit 1
   fi

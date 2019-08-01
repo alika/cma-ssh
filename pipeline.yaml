@@ -8,38 +8,33 @@ envValues:
   - envVar: CMA_CALLBACK_URL
     value: "https://example.cnct.io"
   - envVar: KEY_HOME
-    value: "/var/tmp/cma-ssh/.ssh"
+    value: "/var/tmp/ims-kaas/.ssh"
   - envVar: CMA_CALLBACK_REQUESTID
     value: "12345"
   - envVar: AKS_K8S_VERSION
     value: "1.12.6"
   - envVar: AZURE_CLIENT_ID
-    secret: jobs/cma-ssh/AZURE_CLIENT_ID
+    secret: jobs/ims-kaas/AZURE_CLIENT_ID
   - envVar: AZURE_CLIENT_SECRET
-    secret: jobs/cma-ssh/AZURE_CLIENT_SECRET
+    secret: jobs/ims-kaas/AZURE_CLIENT_SECRET
   - envVar: AZURE_TENANT_ID
-    secret: jobs/cma-ssh/AZURE_TENANT_ID
+    secret: jobs/ims-kaas/AZURE_TENANT_ID
   - envVar: DEBUG
     value: "0"
 builds:
-  - image: samsung_cnct/cma-ssh
-    context: cma-ssh
-    chart: cma-ssh
+  - image: samsung_cnct/ims-kaas
+    context: ims-kaas
+    chart: ims-kaas
     tagValue: images.operator.tag
     dockerContext: .
-  - image: samsung_cnct/cma-ssh-test-scripts
-    context: cma-ssh-test-scripts
+  - image: samsung_cnct/ims-kaas-test-scripts
+    context: ims-kaas-test-scripts
     dockerContext: .
 deployments:
-  - chart: cma-ssh
+  - chart: ims-kaas
     timeout: 600
     retries: 2
     setAppVersion: true
-    release: cma-ssh
-#test:
-#  afterScript:
-#    image: quay.io/samsung_cnct/kind:prod
-#    script: scripts/e2e-tests.sh
-#    shell: /bin/bash
+    release: ims-kaas
 prod:
   doDeploy: none

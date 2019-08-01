@@ -1,10 +1,10 @@
 package apiserver
 
 import (
-	pb "github.com/samsung-cnct/cma-ssh/pkg/generated/api"
+	pb "github.com/samsung-cnct/ims-kaas/pkg/generated/api"
 	"golang.org/x/net/context"
 
-	"github.com/samsung-cnct/cma-ssh/pkg/version"
+	"github.com/samsung-cnct/ims-kaas/pkg/version"
 )
 
 func (s *Server) GetVersionInformation(ctx context.Context, in *pb.GetVersionMsg) (*pb.GetVersionReply, error) {
