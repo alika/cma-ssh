@@ -39,13 +39,13 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/runtime/log"
 	"sigs.k8s.io/controller-runtime/pkg/runtime/signals"
 
-	"github.com/samsung-cnct/cma-ssh/pkg/apis"
-	"github.com/samsung-cnct/cma-ssh/pkg/apiserver"
-	"github.com/samsung-cnct/cma-ssh/pkg/controller"
-	"github.com/samsung-cnct/cma-ssh/pkg/controller/machine"
-	"github.com/samsung-cnct/cma-ssh/pkg/crd"
-	"github.com/samsung-cnct/cma-ssh/pkg/maas"
-	"github.com/samsung-cnct/cma-ssh/pkg/webhook"
+	"github.com/samsung-cnct/ims-kaas/pkg/apis"
+	"github.com/samsung-cnct/ims-kaas/pkg/apiserver"
+	"github.com/samsung-cnct/ims-kaas/pkg/controller"
+	"github.com/samsung-cnct/ims-kaas/pkg/controller/machine"
+	"github.com/samsung-cnct/ims-kaas/pkg/crd"
+	"github.com/samsung-cnct/ims-kaas/pkg/maas"
+	"github.com/samsung-cnct/ims-kaas/pkg/webhook"
 )
 
 const (
@@ -56,7 +56,7 @@ const (
 
 var (
 	rootCmd = &cobra.Command{
-		Use:   "cma-ssh",
+		Use:   "ims-kaas",
 		Short: "CMA SSH Operator",
 		Long:  `CMA SSH provider operator`,
 		Run: func(cmd *cobra.Command, args []string) {

@@ -11,12 +11,12 @@ import (
 	"k8s.io/klog"
 	clientlib "sigs.k8s.io/controller-runtime/pkg/client"
 
-	addonsv1alpha1 "github.com/samsung-cnct/cma-ssh/pkg/apis/addons/v1alpha1"
-	"github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/common"
-	v1alpha "github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/v1alpha1"
-	"github.com/samsung-cnct/cma-ssh/pkg/controller/machineset"
-	pb "github.com/samsung-cnct/cma-ssh/pkg/generated/api"
-	"github.com/samsung-cnct/cma-ssh/pkg/util"
+	addonsv1alpha1 "github.com/samsung-cnct/ims-kaas/pkg/apis/addons/v1alpha1"
+	"github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/common"
+	v1alpha "github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/v1alpha1"
+	"github.com/samsung-cnct/ims-kaas/pkg/controller/machineset"
+	pb "github.com/samsung-cnct/ims-kaas/pkg/generated/api"
+	"github.com/samsung-cnct/ims-kaas/pkg/util"
 )
 
 func (s *Server) CreateCluster(ctx context.Context, in *pb.CreateClusterMsg) (*pb.CreateClusterReply, error) {

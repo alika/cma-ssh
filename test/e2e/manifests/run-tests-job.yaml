@@ -1,13 +1,13 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: cma-ssh-e2e-tests
+  name: ims-kaas-e2e-tests
 spec:
   template:
     spec:
       containers:
-        - name: cma-ssh-e2e-tests
-          image: quay.io/samsung_cnct/cma-ssh-test-scripts:${PIPELINE_DOCKER_TAG}
+        - name: ims-kaas-e2e-tests
+          image: quay.io/samsung_cnct/ims-kaas-test-scripts:${PIPELINE_DOCKER_TAG}
           env:
             - name: CLUSTER_NAME
               value: "${CLUSTER_NAME}"

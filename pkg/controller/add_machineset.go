@@ -17,7 +17,7 @@ limitations under the License.
 package controller
 
 import (
-	"github.com/samsung-cnct/cma-ssh/pkg/controller/machineset"
+	"github.com/samsung-cnct/ims-kaas/pkg/controller/machineset"
 )
 
 func init() {

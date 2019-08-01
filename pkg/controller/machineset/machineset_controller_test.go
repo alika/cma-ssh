@@ -23,7 +23,7 @@ import (
 	"time"
 
 	"github.com/onsi/gomega"
-	clusterv1alpha1 "github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/v1alpha1"
+	clusterv1alpha1 "github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/v1alpha1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"

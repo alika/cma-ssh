@@ -5,8 +5,8 @@ metadata:
   annotations:
     "helm.sh/resource-policy": keep
   labels:
-    helm.sh/chart: '{{include "cma-ssh.chart" .}}'
-    app.kubernetes.io/name: '{{include "cma-ssh.name" .}}'
+    helm.sh/chart: '{{include "ims-kaas.chart" .}}'
+    app.kubernetes.io/name: '{{include "ims-kaas.name" .}}'
     app.kubernetes.io/managed-by: '{{.Release.Service}}'
     app.kubernetes.io/instance: '{{.Release.Name}}'
     app.kubernetes.io/version: '{{.Chart.AppVersion | replace "+" "_" | trunc 63}}'

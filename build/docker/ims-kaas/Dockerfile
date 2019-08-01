@@ -2,16 +2,16 @@
 FROM golang:1.12-stretch as builder
 
 # Copy in the go src
-WORKDIR /go/src/github.com/samsung-cnct/cma-ssh
+WORKDIR /go/src/github.com/samsung-cnct/ims-kaas
 COPY .  ./
 ENV GOOS=linux
 ENV GOARCH=amd64
 ENV CGO_ENABLED=0
 ENV GO111MODULE=on
-RUN go build -o cma-ssh -mod=vendor cmd/cma-ssh/main.go
+RUN go build -o ims-kaas -mod=vendor cmd/ims-kaas/main.go
 
 # Copy the controller-manager into a thin image
 FROM alpine:3.8
 WORKDIR /root/
-COPY --from=builder /go/src/github.com/samsung-cnct/cma-ssh/cma-ssh .
-ENTRYPOINT ["./cma-ssh"]
+COPY --from=builder /go/src/github.com/samsung-cnct/ims-kaas/ims-kaas .
+ENTRYPOINT ["./ims-kaas"]

@@ -18,7 +18,7 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/samsung-cnct/cma-ssh/pkg/version"
+	"github.com/samsung-cnct/ims-kaas/pkg/version"
 	"github.com/spf13/cobra"
 )
 

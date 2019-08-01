@@ -14,7 +14,7 @@ limitations under the License.
 package main
 
 import (
-	"github.com/samsung-cnct/cma-ssh/cmd/cma-ssh/cmd"
+	"github.com/samsung-cnct/ims-kaas/cmd/ims-kaas/cmd"
 )
 
 func main() {

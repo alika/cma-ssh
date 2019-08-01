@@ -7,7 +7,7 @@ import (
 
 	"github.com/shurcooL/vfsgen"
 
-	"github.com/samsung-cnct/cma-ssh/pkg/crd"
+	"github.com/samsung-cnct/ims-kaas/pkg/crd"
 )
 
 func main() {

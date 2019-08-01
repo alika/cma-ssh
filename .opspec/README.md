@@ -1,4 +1,4 @@
-cma-ssh OPCTL README
+ims-kaas OPCTL README
 
 # opctl
 
@@ -23,9 +23,9 @@ requires [opctl](https://opctl.io/docs/getting-started/opctl.html) installed
     - login to azure via cli: `az login`
     - get kubeconfig from aks cluster: `az aks get-credentials -n <name> -g <name>-group` *replace with name from args.yml
 
-5. example helm install: `helm install deployments/helm/cma-ssh --name cma-ssh --set install.operator=false --set images.operator.tag=0.1.12-local --set images.bootstrap.tag=0.1.12-local --set install.bootstrapIp=10.240.0.6 --set install.airgapProxyIp=10.240.0.7`
+5. example helm install: `helm install deployments/helm/ims-kaas --name ims-kaas --set install.operator=false --set images.operator.tag=0.1.12-local --set images.bootstrap.tag=0.1.12-local --set install.bootstrapIp=10.240.0.6 --set install.airgapProxyIp=10.240.0.7`
 
-6. locally start operator `CMA_BOOTSTRAP_IP=10.240.0.6 CMA_NEXUS_PROXY_IP=10.240.0.7 ./cma-ssh`
+6. locally start operator `CMA_BOOTSTRAP_IP=10.240.0.6 CMA_NEXUS_PROXY_IP=10.240.0.7 ./ims-kaas`
 
 
 

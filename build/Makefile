@@ -4,8 +4,8 @@ GOGET=$(GOCMD) get
 GOTEST=$(GOCMD) test
 PROJECTDIR=$(shell pwd)
 VERSIONFILE=$(shell cat ${PROJECTDIR}/.versionfile)
-DOCKERTAG?=quay.io/samsung_cnct/cma-ssh:$(VERSIONFILE)-local
-BOOTSTRAPDOCKERTAG?=quay.io/samsung_cnct/cma-ssh-bootstrap:$(VERSIONFILE)-local
+DOCKERTAG?=quay.io/samsung_cnct/ims-kaas:$(VERSIONFILE)-local
+BOOTSTRAPDOCKERTAG?=quay.io/samsung_cnct/ims-kaas-bootstrap:$(VERSIONFILE)-local
 DEPCMD=dep
 
 # Variables for binary version information
@@ -14,7 +14,7 @@ APP_VERSION=$(shell cat .versionfile)
 BUILD_DATE=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 
 # Associating version information variables with data
-VERSION_PACKAGE=github.com/samsung-cnct/cma-ssh/pkg/version
+VERSION_PACKAGE=github.com/samsung-cnct/ims-kaas/pkg/version
 LD_DATA_GIT_COMMIT=-X ${VERSION_PACKAGE}.gitCommit=${GIT_COMMIT}
 LD_DATA_VERSION=-X ${VERSION_PACKAGE}.version=${APP_VERSION}
 LD_DATA_BUILD_DATE=-X ${VERSION_PACKAGE}.buildDate=${BUILD_DATE}
@@ -27,8 +27,8 @@ STATIC_FLAGS=-w -extldflags "-static"
 LDFLAGS='${STATIC_FLAGS} ${LD_DATA}'
 
 # Location of
-OPERATOR_BINARY_NAME=cma-ssh
-OPERATOR_SOURCE_FILE=cmd/cma-ssh/main.go
+OPERATOR_BINARY_NAME=ims-kaas
+OPERATOR_SOURCE_FILE=cmd/ims-kaas/main.go
 
 # build binary command
 BUILD_OPERATOR_BINARY_CMD=${GOBUILD} -a -tags netgo -ldflags ${LDFLAGS} -o ${OPERATOR_BINARY_NAME} ${OPERATOR_SOURCE_FILE}
@@ -38,9 +38,9 @@ PROTOC_VERSION=3.6.1
 PROTOC_DARWIN_FILENAME=protoc-${PROTOC_VERSION}-osx-x86_64.zip
 PROTOC_DARWIN_DOWNLOAD_URL=https://github.com/google/protobuf/releases/download/v${PROTOC_VERSION}/${PROTOC_DARWIN_FILENAME}
 
-all: test cma-ssh-linux-amd64
-linux: test cma-ssh-linux-amd64
-darwin: test cma-ssh-darwin-amd64
+all: test ims-kaas-linux-amd64
+linux: test ims-kaas-linux-amd64
+darwin: test ims-kaas-darwin-amd64
 container: docker-build
 
 # Run tests
@@ -48,9 +48,9 @@ test: manifests generate fmt vet
 	ginkgo -r ./pkg/... ./cmd/... -coverprofile cover.out
 
 # Build manager binary
-cma-ssh-linux-amd64: manifests generate fmt vet
+ims-kaas-linux-amd64: manifests generate fmt vet
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 ${BUILD_OPERATOR_BINARY_CMD}
-cma-ssh-darwin-amd64: manifests generate fmt vet
+ims-kaas-darwin-amd64: manifests generate fmt vet
 	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 ${BUILD_OPERATOR_BINARY_CMD}
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
@@ -78,14 +78,14 @@ manifests:
 	cp -rf $(PROJECTDIR)/crd/cluster_v1alpha1_cnctmachine.yaml $(PROJECTDIR)/build/kustomize/crd/protected/machine/base
 	cp -rf $(PROJECTDIR)/crd/cluster_v1alpha1_cnctmachineset.yaml $(PROJECTDIR)/build/kustomize/crd/protected/machineset/base
 	cp -rf $(PROJECTDIR)/crd/cluster_v1alpha1_cnctmachineset.yaml $(PROJECTDIR)/build/kustomize/crd/unprotected/machineset/base
-	output=$$(kustomize build build/kustomize/rbac/role); echo "$$output" > $(PROJECTDIR)/deployments/helm/cma-ssh/RBAC/rbac_role.yaml
-	output=$$(kustomize build build/kustomize/rbac/rolebinding); echo "$$output" > $(PROJECTDIR)/deployments/helm/cma-ssh/RBAC/rbac_role_binding.yaml
-	output=$$(kustomize build build/kustomize/crd/protected/cluster); echo "$$output" > $(PROJECTDIR)/deployments/helm/cma-ssh/CRD-protected/cluster_v1alpha1_cnctcluster.yaml
-	output=$$(kustomize build build/kustomize/crd/protected/machine); echo "$$output" > $(PROJECTDIR)/deployments/helm/cma-ssh/CRD-protected/custer_v1alpha1_cnctmachine.yaml
-	output=$$(kustomize build build/kustomize/crd/protected/machineset); echo "$$output" > $(PROJECTDIR)/deployments/helm/cma-ssh/CRD/cluster_v1alpha1_cnctmachineset.yaml
-	output=$$(kustomize build build/kustomize/crd/unprotected/cluster); echo "$$output" > $(PROJECTDIR)/deployments/helm/cma-ssh/CRD/cluster_v1alpha1_cnctcluster.yaml
-	output=$$(kustomize build build/kustomize/crd/unprotected/machine); echo "$$output" > $(PROJECTDIR)/deployments/helm/cma-ssh/CRD/cluster_v1alpha1_cnctmachine.yaml
-	output=$$(kustomize build build/kustomize/crd/unprotected/machineset); echo "$$output" > $(PROJECTDIR)/deployments/helm/cma-ssh/CRD/cluster_v1alpha1_cnctmachineset.yaml
+	output=$$(kustomize build build/kustomize/rbac/role); echo "$$output" > $(PROJECTDIR)/deployments/helm/ims-kaas/RBAC/rbac_role.yaml
+	output=$$(kustomize build build/kustomize/rbac/rolebinding); echo "$$output" > $(PROJECTDIR)/deployments/helm/ims-kaas/RBAC/rbac_role_binding.yaml
+	output=$$(kustomize build build/kustomize/crd/protected/cluster); echo "$$output" > $(PROJECTDIR)/deployments/helm/ims-kaas/CRD-protected/cluster_v1alpha1_cnctcluster.yaml
+	output=$$(kustomize build build/kustomize/crd/protected/machine); echo "$$output" > $(PROJECTDIR)/deployments/helm/ims-kaas/CRD-protected/custer_v1alpha1_cnctmachine.yaml
+	output=$$(kustomize build build/kustomize/crd/protected/machineset); echo "$$output" > $(PROJECTDIR)/deployments/helm/ims-kaas/CRD/cluster_v1alpha1_cnctmachineset.yaml
+	output=$$(kustomize build build/kustomize/crd/unprotected/cluster); echo "$$output" > $(PROJECTDIR)/deployments/helm/ims-kaas/CRD/cluster_v1alpha1_cnctcluster.yaml
+	output=$$(kustomize build build/kustomize/crd/unprotected/machine); echo "$$output" > $(PROJECTDIR)/deployments/helm/ims-kaas/CRD/cluster_v1alpha1_cnctmachine.yaml
+	output=$$(kustomize build build/kustomize/crd/unprotected/machineset); echo "$$output" > $(PROJECTDIR)/deployments/helm/ims-kaas/CRD/cluster_v1alpha1_cnctmachineset.yaml
 
 # Run go fmt against code
 fmt:
@@ -129,7 +129,7 @@ dep-ensure:
 	$(DEPCMD) ensure
 
 docker-build-operator:
-	docker build $(PROJECTDIR) -f $(PROJECTDIR)/build/docker/cma-ssh/Dockerfile -t $(DOCKERTAG)
+	docker build $(PROJECTDIR) -f $(PROJECTDIR)/build/docker/ims-kaas/Dockerfile -t $(DOCKERTAG)
 
 docker-build-bootstrap:
 	docker build $(PROJECTDIR)/build/docker/bootstrap -f $(PROJECTDIR)/build/docker/bootstrap/Dockerfile -t $(BOOTSTRAPDOCKERTAG)
@@ -146,6 +146,6 @@ docker-push-bootstrap:
 # Push the docker image
 docker-push: docker-push-bootstrap docker-push-operator
 	@echo Install chart with local tags:
-	@echo helm install deployments/helm/cma-ssh --name cma-ssh \\
+	@echo helm install deployments/helm/ims-kaas --name ims-kaas \\
 	@echo --set images.operator.tag=$(VERSIONFILE)-local \\
 	@echo --set images.bootstrap.tag=$(VERSIONFILE)-local

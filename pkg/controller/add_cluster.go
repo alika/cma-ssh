@@ -17,7 +17,7 @@ limitations under the License.
 package controller
 
 import (
-	"github.com/samsung-cnct/cma-ssh/pkg/controller/cluster"
+	"github.com/samsung-cnct/ims-kaas/pkg/controller/cluster"
 )
 
 func init() {

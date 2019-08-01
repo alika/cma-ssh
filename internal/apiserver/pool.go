@@ -10,10 +10,10 @@ import (
 	"k8s.io/klog"
 	clientlib "sigs.k8s.io/controller-runtime/pkg/client"
 
-	"github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/common"
-	clusterv1alpha "github.com/samsung-cnct/cma-ssh/pkg/apis/cluster/v1alpha1"
-	"github.com/samsung-cnct/cma-ssh/pkg/controller/machineset"
-	pb "github.com/samsung-cnct/cma-ssh/pkg/generated/api"
+	"github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/common"
+	clusterv1alpha "github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/v1alpha1"
+	"github.com/samsung-cnct/ims-kaas/pkg/controller/machineset"
+	pb "github.com/samsung-cnct/ims-kaas/pkg/generated/api"
 )
 
 func (s *Server) AddNodePool(ctx context.Context, in *pb.AddNodePoolMsg) (*pb.AddNodePoolReply, error) {

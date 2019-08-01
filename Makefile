@@ -1,7 +1,7 @@
 VERSION = v0.1.0
 DIR := ${CURDIR}
 REGISTRY ?= quay.io/samsung_cnct
-TARGET= cma-ssh
+TARGET= ims-kaas
 GOTARGET = github.com/samsung-cnct/$(TARGET)
 IMAGE = $(REGISTRY)/$(TARGET)-dependencies
 BUILDMNT = /go/src/$(GOTARGET)
@@ -23,17 +23,17 @@ endif
 PROTOC_FILENAME=protoc-${PROTOC_VERSION}-${PROTOC_ARCH}.zip
 PROTOC_DOWNLOAD_URL=https://github.com/google/protobuf/releases/download/v${PROTOC_VERSION}/${PROTOC_FILENAME}
 
-all: cma-ssh
+all: ims-kaas
 
 clean:
 	rm -rf bin
-	rm -f cma-ssh
+	rm -f ims-kaas
 
 $(GO):
 	GO111MODULE=off go get -u golang.org/dl/$(GO)
 	GO111MODULE=off $(GO) download
 
-cma-ssh: $(GOFILES)
+ims-kaas: $(GOFILES)
 	CGO_ENABLED=0 $(GO_SYSTEM_FLAGS) $(GO) build -o $(TARGET) .
 
 bin:
@@ -73,11 +73,11 @@ build-dependencies-container:
 test: build-dependencies-container
 	$(DOCKER_BUILD) 'go test -v ./...'
 
-generate:
-	go generate ./...
+generate: bin/deepcopy-gen
+	$(GO_SYSTEM_FLAGS) $(GO) generate -v -x ./...
 
 clean-test: build-dependencies-container
-	$(DOCKER_BUILD) '$(GO_SYSTEM_FLAGS) $(GO) build -o $(TARGET) ./cmd/cma-ssh'
+	$(DOCKER_BUILD) '$(GO_SYSTEM_FLAGS) $(GO) build -o $(TARGET) ./cmd/ims-kaas'
 
 # protoc generates the proto buf api
 protoc: bin/protoc-gen-go bin/protoc-gen-grpc-gateway bin/protoc-gen-swagger bin/protoc-gen-doc bin/protoc/bin/protoc
@@ -94,5 +94,5 @@ manifests: bin/controller-gen bin/kustomize
 	mkdir -p ${CURDIR}/build/kustomize/rbac/rolebinding/base
 	cp -rf ${CURDIR}/rbac/rbac_role.yaml ${CURDIR}/build/kustomize/rbac/role/base
 	cp -rf ${CURDIR}/rbac/rbac_role_binding.yaml ${CURDIR}/build/kustomize/rbac/rolebinding/base
-	bin/kustomize build build/kustomize/rbac/role > ${CURDIR}/deployments/helm/cma-ssh/RBAC/rbac_role.yaml
-	bin/kustomize build build/kustomize/rbac/rolebinding > ${CURDIR}/deployments/helm/cma-ssh/RBAC/rbac_role_binding.yaml
+	bin/kustomize build build/kustomize/rbac/role > ${CURDIR}/deployments/helm/ims-kaas/RBAC/rbac_role.yaml
+	bin/kustomize build build/kustomize/rbac/rolebinding > ${CURDIR}/deployments/helm/ims-kaas/RBAC/rbac_role_binding.yaml

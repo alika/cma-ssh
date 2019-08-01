@@ -22,7 +22,7 @@ DATA=$(cat <<JSON
   "control_plane_nodes": {
     "labels": [
       {
-        "name": "cma-ssh-test",
+        "name": "ims-kaas-test",
         "value": "true"
       }
     ],
@@ -34,7 +34,7 @@ DATA=$(cat <<JSON
       "name": "test-pool1",
       "labels": [
         {
-          "name": "cma-ssh-test",
+          "name": "ims-kaas-test",
           "value": "true"
         }
       ],

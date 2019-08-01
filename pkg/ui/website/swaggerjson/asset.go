@@ -3,7 +3,7 @@
 package swaggerjson
 
 import (
-	"github.com/samsung-cnct/cma-ssh/pkg/util"
+	"github.com/samsung-cnct/ims-kaas/pkg/util"
 	"go/build"
 	"log"
 	"net/http"
@@ -18,5 +18,5 @@ func importPathToDir(importPath string) string {
 }
 
 var Swagger util.ZeroModTimeFileSystem = util.ZeroModTimeFileSystem{Source: http.Dir(
-	importPathToDir("github.com/samsung-cnct/cma-ssh/assets/generated/swagger"),
+	importPathToDir("github.com/samsung-cnct/ims-kaas/assets/generated/swagger"),
 )}

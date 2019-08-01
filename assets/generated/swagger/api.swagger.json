@@ -5,7 +5,7 @@
     "version": "v0.1.0",
     "contact": {
       "name": "Samsung CNCT",
-      "url": "https://github.com/samsung-cnct/cma-ssh",
+      "url": "https://github.com/samsung-cnct/ims-kaas",
       "email": "samsung.cloudnative@gmail.com"
     }
   },
@@ -710,6 +710,6 @@
   },
   "externalDocs": {
     "description": "More about Cluster Manager API SSH provider",
-    "url": "https://github.com/samsung-cnct/cma-ssh"
+    "url": "https://github.com/samsung-cnct/ims-kaas"
   }
 }

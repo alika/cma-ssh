@@ -26,7 +26,7 @@ DEBUG=${DEBUG:-1}
 RESET_ENV=${RESET_ENV:-1}
 [[ ${RESET_ENV} == 1 ]] && trap finish EXIT
 
-CMC_NAME=${CMC_NAME:-cma-ssh-$(date +%Y%m%dt%H%M%S)}
+CMC_NAME=${CMC_NAME:-ims-kaas-$(date +%Y%m%dt%H%M%S)}
 
 export NAME_PREFIX=${NAME_PREFIX:-$CMC_NAME}
 export CLUSTER_API=${CLUSTER_API:-https://cluster-manager-api-cluster-manager-api}
@@ -106,12 +106,12 @@ helm --debug install --name cert-manager --namespace cert-manager stable/cert-ma
 # is this necessary?
 helm --debug install --name nginx-ingress stable/nginx-ingress
 
-helm --debug install --name cma-ssh  \
+helm --debug install --name ims-kaas  \
      --set images.bootstrap.tag="${PIPELINE_DOCKER_TAG}" \
      --set images.operator.tag="${PIPELINE_DOCKER_TAG}" \
      --set install.bootstrapIp="${nodeIP}" \
      --set install.airgapProxyIp="${proxyIP}" \
-           cnct/cma-ssh --wait --timeout=600
+           cnct/ims-kaas --wait --timeout=600
 helm --debug install -f "$PIPELINE_WORKSPACE"/test/e2e/manifests/cma-values.yaml --name cluster-manager-api cnct/cluster-manager-api --wait --timeout=600
 helm --debug install -f "$PIPELINE_WORKSPACE"/test/e2e/manifests/cma-operator-values.yaml --name cma-operator cnct/cma-operator --wait --timeout=600
 
@@ -127,7 +127,7 @@ envsubst < "$PIPELINE_WORKSPACE"/test/e2e/manifests/run-tests-job.yaml | kubectl
 # if this fails, I don't necessarily want to tear down the cluster yet.
 # IE I don't want to trigger the trap.
 set +e
-kubectl wait --for=condition=complete job/cma-ssh-e2e-tests --timeout=36m
+kubectl wait --for=condition=complete job/ims-kaas-e2e-tests --timeout=36m
 
 # output logs after job completes
-kubectl logs job/cma-ssh-e2e-tests -n pipeline-tools
+kubectl logs job/ims-kaas-e2e-tests -n pipeline-tools

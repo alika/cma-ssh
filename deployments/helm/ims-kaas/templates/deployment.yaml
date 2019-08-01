@@ -2,10 +2,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "cma-ssh.fullname" . }}
+  name: {{ include "ims-kaas.fullname" . }}
   labels:
-    helm.sh/chart: {{ include "cma-ssh.chart" . }}
-    app.kubernetes.io/name: {{ include "cma-ssh.name" . }}
+    helm.sh/chart: {{ include "ims-kaas.chart" . }}
+    app.kubernetes.io/name: {{ include "ims-kaas.name" . }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/version: {{ .Chart.AppVersion | replace "+" "_" | trunc 63 }}
@@ -13,16 +13,16 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "cma-ssh.name" . }}
+      app: {{ include "ims-kaas.name" . }}
       release: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ include "cma-ssh.name" . }}
+        app: {{ include "ims-kaas.name" . }}
         release: {{ .Release.Name }}
     spec:
       {{- if .Values.rbac }}
-      serviceAccountName: {{ include "cma-ssh.name" . }}
+      serviceAccountName: {{ include "ims-kaas.name" . }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -35,7 +35,7 @@ spec:
               value: "{{ .Values.maas.apiVersion }}"
             - name: MAAS_API_KEY
               value: "{{ .Values.maas.apiKey }}"
-          command: ["./cma-ssh"]
+          command: ["./ims-kaas"]
           args: ["--port", "{{ .Values.service.operator.targetPort }}", "--logtostderr", "--v", "{{ .Values.logLevel }}"]
           resources:
 {{ toYaml .Values.resources | indent 12 }}

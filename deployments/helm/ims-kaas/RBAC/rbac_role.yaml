@@ -5,10 +5,10 @@ metadata:
   labels:
     app.kubernetes.io/instance: '{{.Release.Name}}'
     app.kubernetes.io/managed-by: '{{.Release.Service}}'
-    app.kubernetes.io/name: '{{include "cma-ssh.name" .}}'
+    app.kubernetes.io/name: '{{include "ims-kaas.name" .}}'
     app.kubernetes.io/version: '{{.Chart.AppVersion | replace "+" "_" | trunc 63}}'
-    helm.sh/chart: '{{include "cma-ssh.chart" .}}'
-  name: '{{ include "cma-ssh.name" . }}-rbac-role'
+    helm.sh/chart: '{{include "ims-kaas.chart" .}}'
+  name: '{{ include "ims-kaas.name" . }}-rbac-role'
 rules:
 - apiGroups:
   - apiextensions.k8s.io

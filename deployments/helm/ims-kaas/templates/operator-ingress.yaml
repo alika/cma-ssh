@@ -5,37 +5,37 @@ kind: Ingress
 metadata:
     annotations:
         nginx.ingress.kubernetes.io/grpc-backend: "true"
-    name: {{ include "cma-ssh.name" . }}-grpc
+    name: {{ include "ims-kaas.name" . }}-grpc
 spec:
     rules:
         - host: {{ .Values.ingress.grpc.host }}
           http:
               paths:
                   - backend:
-                        serviceName: {{ include "cma-ssh.name" . }}
+                        serviceName: {{ include "ims-kaas.name" . }}
                         servicePort: {{ .Values.service.operator.port | int }}
                     path: /
     tls:
         - hosts:
               - {{ .Values.ingress.grpc.host }}
-          secretName: {{ include "cma-ssh.name" . }}-tls
+          secretName: {{ include "ims-kaas.name" . }}-tls
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-    name: {{ include "cma-ssh.name" . }}
+    name: {{ include "ims-kaas.name" . }}
 spec:
     rules:
         - host: {{ .Values.ingress.rest.host }}
           http:
               paths:
                   - backend:
-                        serviceName: {{ include "cma-ssh.name" . }}
+                        serviceName: {{ include "ims-kaas.name" . }}
                         servicePort: {{ .Values.service.operator.port | int }}
                     path: /
     tls:
         - hosts:
               - {{ .Values.ingress.rest.host }}
-          secretName: {{ include "cma-ssh.name" . }}-tls
+          secretName: {{ include "ims-kaas.name" . }}-tls
 {{- end }}
 {{- end }}
