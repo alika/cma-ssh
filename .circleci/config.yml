@@ -32,7 +32,7 @@ jobs:
       - deploy:
           name: Push application Docker image
           command: |
-            echo "${DOCKER_PASSWORD}" | docker login ${DOCKER_REGISTRY_URL} --username ${DOCKER_LOGIN} --password-stdin 
+            echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_LOGIN} --password-stdin ${DOCKER_REGISTRY_URL}
             docker push ${DOCKER_REGISTRY_AND_USER}/ims-kaas:$(cat .versionfile | tr -d '[:space:]') 
 workflows:
   version: 2
