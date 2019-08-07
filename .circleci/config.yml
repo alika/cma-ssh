@@ -1,0 +1,45 @@
+version: 2.1
+jobs:
+  build-push-image:
+    docker:
+      - image: docker:17.05.0-ce-git
+    steps:
+      - checkout
+      - setup_remote_docker
+      - restore_cache:
+          keys:
+            - v1-{{ .Branch }}
+          paths:
+            - /caches/ims-kaas.tar
+      - run:
+          name: Load Docker image layer cache
+          command: |
+            set +o pipefail
+            docker load -i /caches/ims-kaas.tar | true
+      - run:
+          name: Build application Docker image
+          command: |
+            docker build . -f build/docker/ims-kaas/Dockerfile --cache-from=ims-kaas -t ${DOCKER_REGISTRY_AND_USER}/ims-kaas:$(cat .versionfile | tr -d '[:space:]') 
+      - run:
+          name: Save Docker image layer cache
+          command: |
+            mkdir -p /caches
+            docker save -o /caches/ims-kaas.tar ims-kaas
+      - save_cache:
+          key: v1-{{ .Branch }}-{{ epoch }}
+          paths:
+            - /caches/app.tar
+      - deploy:
+          name: Push application Docker image
+          command: |
+            echo "${DOCKER_PASSWORD}" | docker login ${DOCKER_REGISTRY_URL} --username ${DOCKER_LOGIN} --password-stdin 
+            docker push ${DOCKER_REGISTRY_AND_USER}/ims-kaas:$(cat .versionfile | tr -d '[:space:]') 
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build-push-image:
+          context: CNCT_HARBOR
+          filters:
+            branches:
+              only: master

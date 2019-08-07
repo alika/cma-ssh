@@ -1,5 +1,5 @@
 # ims-kaas
-[![Build Status](https://jenkins.cnct.io/buildStatus/icon?job=ims-kaas/master)](https://jenkins.cnct.io/job/ims-kaas/job/master/)
+[![CircleCI](https://circleci.com/gh/samsung-cnct/ims-kaas/tree/master.svg?style=svg&circle-token=43855a16154d0ded4dda8b3fa08f3dd4b2298a69)](https://circleci.com/gh/samsung-cnct/ims-kaas/tree/master)
 
 # What is this?
 
