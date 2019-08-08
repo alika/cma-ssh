@@ -78,7 +78,7 @@ jobs:
           name: initialize helm
           command: | 
             helm init --client-only
-            helm repo add --username=${DOCKER_LOGIN} --password=${DOCKER_PASSWORD} cnct ${HELM_REGISTRY_AND_USER}
+            helm repo add --username=${HELM_LOGIN} --password=${HELM_PASSWORD} cnct ${HELM_REGISTRY_AND_USER}
       - run:
           name: helm lint and template
           command: | 
@@ -88,7 +88,7 @@ jobs:
           name: helm package and push
           command: | 
             helm package --debug deployments/helm/ims-kaas
-            curl -u ${DOCKER_LOGIN}:${DOCKER_PASSWORD} -F chart=@ims-kaas-$(cat .versionfile | tr -d '[:space:]').tgz ${HELM_REGISTRY_PUSH_ENPOINT} --show-error --fail
+            curl -u ${HELM_LOGIN}:${HELM_PASSWORD} -F chart=@ims-kaas-$(cat .versionfile | tr -d '[:space:]').tgz ${HELM_REGISTRY_PUSH_ENPOINT} --show-error --fail
 workflows:
   version: 2
   build-deploy:
