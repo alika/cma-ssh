@@ -1,14 +1,29 @@
 version: 2.1
-jobs:
-  build-push-image:
+executors:
+  docker-executor:
     docker:
       - image: docker:stable-git
+  helm-executor:
+    docker:
+      - image: ${DOCKER_REGISTRY_AND_USER}/pipeline-tools-helm:latest
+        auth:
+          username: ${DOCKER_LOGIN}
+          password: ${DOCKER_PASSWORD}
+  yamlparse-executor:
+    docker:
+      - image: ${DOCKER_REGISTRY_AND_USER}/pipeline-tools-yaml:latest
+        auth:
+          username: ${DOCKER_LOGIN}
+          password: ${DOCKER_PASSWORD}
+jobs:
+  build-push-image:
+    executor: docker-executor
     steps:
       - checkout
       - setup_remote_docker
       - restore_cache:
           keys:
-            - v1-{{ .Branch }}
+            - v1-kaas-{{ .Branch }}
           paths:
             - /caches/ims-kaas.tar
       - run:
@@ -19,27 +34,79 @@ jobs:
       - run:
           name: Build application Docker image
           command: |
-            docker build . -f build/docker/ims-kaas/Dockerfile --cache-from=ims-kaas -t ${DOCKER_REGISTRY_AND_USER}/ims-kaas:$(cat .versionfile | tr -d '[:space:]') 
+            docker build . -f build/docker/ims-kaas/Dockerfile --cache-from=${DOCKER_REGISTRY_AND_USER}/ims-kaas:local -t ${DOCKER_REGISTRY_AND_USER}/ims-kaas:local
       - run:
           name: Save Docker image layer cache
           command: |
             mkdir -p /caches
-            docker save -o /caches/ims-kaas.tar ${DOCKER_REGISTRY_AND_USER}/ims-kaas:$(cat .versionfile | tr -d '[:space:]')
+            docker save -o /caches/ims-kaas.tar ${DOCKER_REGISTRY_AND_USER}/ims-kaas:local
       - save_cache:
-          key: v1-{{ .Branch }}-{{ epoch }}
+          key: v1-kaas-{{ .Branch }}
           paths:
             - /caches/ims-kaas.tar
       - deploy:
           name: Push application Docker image
           command: |
             echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_LOGIN} --password-stdin ${DOCKER_REGISTRY_URL}
+            docker tag ${DOCKER_REGISTRY_AND_USER}/ims-kaas:local ${DOCKER_REGISTRY_AND_USER}/ims-kaas:$(cat .versionfile | tr -d '[:space:]') 
             docker push ${DOCKER_REGISTRY_AND_USER}/ims-kaas:$(cat .versionfile | tr -d '[:space:]') 
+  update-chart-yaml:
+    executor: yamlparse-executor
+    steps:
+      - checkout
+      - run:
+          name: replace docker tags in chart
+          command: |
+            parse.py --file deployments/helm/ims-kaas/values.yaml --key-val images.operator.tag=$(cat .versionfile | tr -d '[:space:]') --dry-run
+            parse.py --file deployments/helm/ims-kaas/values.yaml --key-val images.operator.tag=$(cat .versionfile | tr -d '[:space:]')
+      - run:
+          name: replace docker tags in chart
+          command: |
+            parse.py --file deployments/helm/ims-kaas/Chart.yaml --key-val version=$(cat .versionfile | tr -d '[:space:]') --dry-run
+            parse.py --file deployments/helm/ims-kaas/Chart.yaml --key-val version=$(cat .versionfile | tr -d '[:space:]')      
+      - persist_to_workspace:
+          root: /
+          paths:
+            - deployments
+            - .versionfile
+  publish-helm-chart:
+    executor: helm-executor 
+    steps:
+      - attach_workspace:
+          at: /
+      - run:
+          name: initialize helm
+          command: | 
+            helm init --client-only
+            helm repo add --username=${DOCKER_LOGIN} --password=${DOCKER_PASSWORD} cnct ${HELM_REGISTRY_AND_USER}
+      - run:
+          name: helm lint and template
+          command: | 
+            helm lint --debug deployments/helm/ims-kaas
+            helm template --debug --notes deployments/helm/ims-kaas
+      - run:
+          name: helm package and push
+          command: | 
+            helm package --debug deployments/helm/ims-kaas
+            curl -u ${DOCKER_LOGIN}:${DOCKER_PASSWORD} -F chart=@ims-kaas-$(cat .versionfile | tr -d '[:space:]').tgz ${HELM_REGISTRY_PUSH_ENPOINT} --show-error --fail
 workflows:
   version: 2
   build-deploy:
     jobs:
       - build-push-image:
           context: CNCT_HARBOR
+          filters:
+            branches:
+              only: master
+      - update-chart-yaml:
+          context: CNCT_HARBOR
+          filters:
+            branches:
+              only: master
+      - publish-helm-chart:
+          context: CNCT_HARBOR
+          requires:
+            - update-chart-yaml
           filters:
             branches:
               only: master
