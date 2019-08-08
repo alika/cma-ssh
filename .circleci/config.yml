@@ -7,14 +7,14 @@ executors:
     docker:
       - image: ${DOCKER_REGISTRY_AND_USER}/pipeline-tools-helm:latest
         auth:
-          username: ${DOCKER_LOGIN}
-          password: ${DOCKER_PASSWORD}
+          username: ${HARBOR_ROBOT_LOGIN}
+          password: ${HARBOR_ROBOT_PASSWORD}
   yamlparse-executor:
     docker:
       - image: ${DOCKER_REGISTRY_AND_USER}/pipeline-tools-yaml:latest
         auth:
-          username: ${DOCKER_LOGIN}
-          password: ${DOCKER_PASSWORD}
+          username: ${HARBOR_ROBOT_LOGIN}
+          password: ${HARBOR_ROBOT_PASSWORD}
 jobs:
   build-push-image:
     executor: docker-executor
@@ -47,7 +47,7 @@ jobs:
       - deploy:
           name: Push application Docker image
           command: |
-            echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_LOGIN} --password-stdin ${DOCKER_REGISTRY_URL}
+            echo "${HARBOR_ROBOT_PASSWORD}" | docker login --username ${HARBOR_ROBOT_LOGIN} --password-stdin ${DOCKER_REGISTRY_URL}
             docker tag ${DOCKER_REGISTRY_AND_USER}/ims-kaas:local ${DOCKER_REGISTRY_AND_USER}/ims-kaas:$(cat .versionfile | tr -d '[:space:]') 
             docker push ${DOCKER_REGISTRY_AND_USER}/ims-kaas:$(cat .versionfile | tr -d '[:space:]') 
   update-chart-yaml:
@@ -78,7 +78,7 @@ jobs:
           name: initialize helm
           command: | 
             helm init --client-only
-            helm repo add --username=${HELM_LOGIN} --password=${HELM_PASSWORD} cnct ${HELM_REGISTRY_AND_USER}
+            helm repo add --username=${HARBOR_ROBOT_LOGIN} --password=${HARBOR_ROBOT_PASSWORD} cnct ${HELM_REGISTRY_AND_USER}
       - run:
           name: helm lint and template
           command: | 
@@ -88,7 +88,7 @@ jobs:
           name: helm package and push
           command: | 
             helm package --debug deployments/helm/ims-kaas
-            curl -u ${HELM_LOGIN}:${HELM_PASSWORD} -F chart=@ims-kaas-$(cat .versionfile | tr -d '[:space:]').tgz ${HELM_REGISTRY_PUSH_ENPOINT} --show-error --fail
+            curl -u ${HARBOR_ROBOT_LOGIN}:${HARBOR_ROBOT_PASSWORD} -F chart=@ims-kaas-$(cat .versionfile | tr -d '[:space:]').tgz ${HELM_REGISTRY_PUSH_ENPOINT} --show-error --fail
 workflows:
   version: 2
   build-deploy:
