@@ -65,7 +65,7 @@ jobs:
             parse.py --file deployments/helm/ims-kaas/Chart.yaml --key-val version=$(cat .versionfile | tr -d '[:space:]') --dry-run
             parse.py --file deployments/helm/ims-kaas/Chart.yaml --key-val version=$(cat .versionfile | tr -d '[:space:]')      
       - persist_to_workspace:
-          root: /
+          root: .
           paths:
             - deployments
             - .versionfile
@@ -73,7 +73,7 @@ jobs:
     executor: helm-executor 
     steps:
       - attach_workspace:
-          at: /
+          at: .
       - run:
           name: initialize helm
           command: | 
