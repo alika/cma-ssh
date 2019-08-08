@@ -100,6 +100,8 @@ workflows:
               only: master
       - update-chart-yaml:
           context: CNCT_HARBOR
+          requires:
+            - build-push-image
           filters:
             branches:
               only: master
