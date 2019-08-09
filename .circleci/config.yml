@@ -173,7 +173,7 @@ jobs:
           at: .
       - add_ssh_keys:
           fingerprints:
-            - "0d:7a:39:e5:62:32:38:16:c7:2c:d2:5b:d7:dc:3e:d7"
+            - "33:02:76:0d:f2:82:9d:b7:7f:c8:c6:f1:28:a4:d3:5e"
       - run:
           name: initialize helm
           command: | 
