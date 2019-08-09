@@ -18,8 +18,6 @@ syntax = "proto3";
 
 package cnct.kaas.api;
 
-option go_package = "github.com/samsung-cnct/ims-kaas/pkg/generated/api;api";
-
 import "google/api/annotations.proto";
 import "protoc-gen-swagger/options/annotations.proto";
 

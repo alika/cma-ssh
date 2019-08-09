@@ -2,11 +2,11 @@
 // source: api.proto
 
 /*
-Package api is a reverse proxy.
+Package cnct_kaas_api is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package api
+package cnct_kaas_api
 
 import (
 	"context"

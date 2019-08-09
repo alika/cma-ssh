@@ -8,7 +8,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 
 	"github.com/samsung-cnct/ims-kaas/pkg/apis/cluster/common"
-	"github.com/samsung-cnct/ims-kaas/pkg/generated/api"
+	api "github.com/samsung-cnct/ims-kaas/pkg/generated/api"
 	"github.com/samsung-cnct/ims-kaas/pkg/util"
 )
 
