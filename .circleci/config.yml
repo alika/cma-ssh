@@ -15,15 +15,18 @@ executors:
         auth:
           username: ${HARBOR_ROBOT_LOGIN}
           password: ${HARBOR_ROBOT_PASSWORD}
+  minikube-executor:
+    machine:
+      image: circleci/classic:201808-01
 jobs:
-  build-push-image:
+  build-push:
     executor: docker-executor
     steps:
       - checkout
       - setup_remote_docker
       - restore_cache:
           keys:
-            - v1-kaas-{{ .Branch }}
+            - kaas-{{ .Branch }}
           paths:
             - /caches/ims-kaas.tar
       - run:
@@ -34,42 +37,135 @@ jobs:
       - run:
           name: Build application Docker image
           command: |
-            docker build . -f build/docker/ims-kaas/Dockerfile --cache-from=${DOCKER_REGISTRY_AND_USER}/ims-kaas:local -t ${DOCKER_REGISTRY_AND_USER}/ims-kaas:local
+            docker build . -f build/docker/ims-kaas/Dockerfile --cache-from=app -t app
       - run:
           name: Save Docker image layer cache
           command: |
             mkdir -p /caches
-            docker save -o /caches/ims-kaas.tar ${DOCKER_REGISTRY_AND_USER}/ims-kaas:local
+            docker save -o /caches/ims-kaas.tar app
       - save_cache:
-          key: v1-kaas-{{ .Branch }}
+          key: kaas-{{ .Branch }}-{{ epoch }}
           paths:
             - /caches/ims-kaas.tar
       - deploy:
           name: Push application Docker image
           command: |
+            # determine which tag to use.
+            # pull requests get version from versionfile + SHA1
+            # master merges get version from versionfile
+            [[ -z "${CIRCLE_PR_NUMBER}" ]] && tag="$(cat .versionfile | tr -d '[:space:]')" || tag="$(cat .versionfile | tr -d '[:space:]')_${CIRCLE_SHA1}"
+
+            # login to docker registry, tag and push
             echo "${HARBOR_ROBOT_PASSWORD}" | docker login --username ${HARBOR_ROBOT_LOGIN} --password-stdin ${DOCKER_REGISTRY_URL}
-            docker tag ${DOCKER_REGISTRY_AND_USER}/ims-kaas:local ${DOCKER_REGISTRY_AND_USER}/ims-kaas:$(cat .versionfile | tr -d '[:space:]') 
-            docker push ${DOCKER_REGISTRY_AND_USER}/ims-kaas:$(cat .versionfile | tr -d '[:space:]') 
-  update-chart-yaml:
+            docker tag app ${DOCKER_REGISTRY_AND_USER}/ims-kaas:${tag}
+            docker push ${DOCKER_REGISTRY_AND_USER}/ims-kaas:$(cat .versionfile | tr -d '[:space:]')
+  update-chart:
     executor: yamlparse-executor
     steps:
       - checkout
       - run:
           name: replace docker tags in chart
           command: |
-            parse.py --file deployments/helm/ims-kaas/values.yaml --key-val images.operator.tag=$(cat .versionfile | tr -d '[:space:]') --dry-run
-            parse.py --file deployments/helm/ims-kaas/values.yaml --key-val images.operator.tag=$(cat .versionfile | tr -d '[:space:]')
+            [[ -z "${CIRCLE_PR_NUMBER}" ]] && tag="$(cat .versionfile | tr -d '[:space:]')" || tag="$(cat .versionfile | tr -d '[:space:]')_${CIRCLE_SHA1}"
+            parse.py --file deployments/helm/ims-kaas/values.yaml --key-val images.operator.tag=${tag} --dry-run
+            parse.py --file deployments/helm/ims-kaas/values.yaml --key-val images.operator.tag=${tag}
       - run:
-          name: replace docker tags in chart
+          name: replace chart version
           command: |
-            parse.py --file deployments/helm/ims-kaas/Chart.yaml --key-val version=$(cat .versionfile | tr -d '[:space:]') --dry-run
-            parse.py --file deployments/helm/ims-kaas/Chart.yaml --key-val version=$(cat .versionfile | tr -d '[:space:]')      
+            [[ -z "${CIRCLE_PR_NUMBER}" ]] && version="$(cat .versionfile | tr -d '[:space:]')" || version="$(cat .versionfile | tr -d '[:space:]')+${CIRCLE_SHA1}"
+            parse.py --file deployments/helm/ims-kaas/Chart.yaml --key-val version=${version} --dry-run
+            parse.py --file deployments/helm/ims-kaas/Chart.yaml --key-val version=${version} 
+      - run:
+          name: replace app version
+          command: |
+            [[ -z "${CIRCLE_PR_NUMBER}" ]] && version="$(cat .versionfile | tr -d '[:space:]')" || version="$(cat .versionfile | tr -d '[:space:]')+${CIRCLE_SHA1}"
+            parse.py --file deployments/helm/ims-kaas/Chart.yaml --key-val appVersion=${version} --dry-run
+            parse.py --file deployments/helm/ims-kaas/Chart.yaml --key-val appVersion=${version} 
       - persist_to_workspace:
           root: .
           paths:
             - deployments
             - .versionfile
-  publish-helm-chart:
+  lint-chart:
+    executor: helm-executor 
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: helm lint and template
+          command: | 
+            helm init --client-only
+            helm repo add --username=${HARBOR_ROBOT_LOGIN} --password=${HARBOR_ROBOT_PASSWORD} cnct ${HELM_REGISTRY_AND_USER}
+            helm dependency update --debug deployments/helm/ims-kaas
+            helm lint --debug deployments/helm/ims-kaas
+            helm template --debug --notes deployments/helm/ims-kaas
+  test-chart:
+    executor: minikube-executor
+    environment:
+      K8S_VERSION: v1.15.0
+      KUBECONFIG: /home/circleci/.kube/config
+      MINIKUBE_VERSION: v1.3.0
+      MINIKUBE_WANTUPDATENOTIFICATION: false
+      MINIKUBE_WANTREPORTERRORPROMPT: false
+      MINIKUBE_HOME: /home/circleci
+      CHANGE_MINIKUBE_NONE_USER: true
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Setup kubectl
+          command: |
+            curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl
+            chmod +x kubectl
+            sudo mv kubectl /usr/local/bin/mkdir -p ${HOME}/.kube
+            touch ${HOME}/.kube/config
+      - run:
+          name: Setup minikube
+          command: |
+            curl -Lo minikube https://github.com/kubernetes/minikube/releases/download/${MINIKUBE_VERSION}/minikube-linux-amd64
+            chmod +x minikube
+            sudo mv minikube /usr/local/bin/
+      - run:
+          name: setup helm
+          command: curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
+      - run:
+          name: Start minikube
+          command: |
+            sudo -E minikube start --vm-driver=none --cpus 2 --memory 2048 --kubernetes-version=${K8S_VERSION}
+      - run:
+          name: wait for minikube
+          command: |
+            JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}';
+            until kubectl get nodes -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True"; do
+              sleep 1;
+            done
+      - run:
+          name: fix RBAC
+          command: |
+            # make default account cluster-admin
+            kubectl create clusterrolebinding add-on-cluster-admin --clusterrole cluster-admin --serviceaccount=kube-system:default
+      - run:
+          name: dump cluster-info
+          command: |
+            kubectl cluster-info
+            kubectl get po --all-namespaces
+      - run:
+          name: install helm in cluster
+          command: |
+            kubectl -n kube-system create sa tiller
+            kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
+            helm init --wait --service-account tiller 
+            helm repo add --username=${HARBOR_ROBOT_LOGIN} --password=${HARBOR_ROBOT_PASSWORD} cnct ${HELM_REGISTRY_AND_USER}
+      - run: 
+          name: install chart in minikube cluster, run tests and print logs
+          command: |
+            helm dependency update --debug deployments/helm/ims-kaas
+            helm install deployments/helm/ims-kaas --wait --name ims-kaas
+            helm test ims-kaas --debug
+            kubectl get pods -o go-template \
+              --template='{{range .items}}{{\$name := .metadata.name}}{{range \$key,\$value := .metadata.annotations}}{{\$name}} {{\$key}}:{{\$value}}+{{end}}{{end}}' \
+              | tr '+' '\\n' | grep -e helm.sh/hook:.*test-success -e helm.sh/hook:.*test-failure | cut -d' ' -f1 | while read line; do kubectl logs \$line; done
+  publish-chart:
     executor: helm-executor 
     steps:
       - attach_workspace:
@@ -79,11 +175,7 @@ jobs:
           command: | 
             helm init --client-only
             helm repo add --username=${HARBOR_ROBOT_LOGIN} --password=${HARBOR_ROBOT_PASSWORD} cnct ${HELM_REGISTRY_AND_USER}
-      - run:
-          name: helm lint and template
-          command: | 
-            helm lint --debug deployments/helm/ims-kaas
-            helm template --debug --notes deployments/helm/ims-kaas
+            helm dependency update --debug deployments/helm/ims-kaas
       - run:
           name: helm package and push
           command: | 
@@ -93,22 +185,30 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build-push-image:
+      - build-push:
           context: CNCT_HARBOR
-          filters:
-            branches:
-              only: master
-      - update-chart-yaml:
+      - update-chart:
           context: CNCT_HARBOR
           requires:
-            - build-push-image
-          filters:
-            branches:
-              only: master
-      - publish-helm-chart:
+            - build-push
+      - lint-chart:
           context: CNCT_HARBOR
           requires:
-            - update-chart-yaml
+            - update-chart
+          filters:
+            branches:
+              only: /^pull\/.*$/
+      - test-chart:
+          context: CNCT_HARBOR
+          requires:
+            - lint-chart
+          filters:
+            branches:
+              only: /^pull\/.*$/
+      - publish-chart:
+          context: CNCT_HARBOR
+          requires:
+            - update-chart
           filters:
             branches:
               only: master
