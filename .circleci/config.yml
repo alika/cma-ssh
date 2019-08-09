@@ -193,7 +193,7 @@ jobs:
             git add deployments/helm/ims-kaas/values.yaml
             git add deployments/helm/ims-kaas/Chart.yaml
             git commit --allow-empty -m 'Automated values and version update from CircleCI [ci skip]'
-            git push origin master
+            GIT_SSH_COMMAND="ssh -v" git push origin master
 
 workflows:
   version: 2
