@@ -22,9 +22,6 @@ jobs:
   build-push:
     executor: docker-executor
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "33:02:76:0d:f2:82:9d:b7:7f:c8:c6:f1:28:a4:d3:5e"
       - checkout
       - setup_remote_docker
       - restore_cache:
@@ -65,9 +62,6 @@ jobs:
   update-chart:
     executor: yamlparse-executor
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "33:02:76:0d:f2:82:9d:b7:7f:c8:c6:f1:28:a4:d3:5e"
       - checkout
       - run:
           name: replace docker tags in chart
@@ -199,7 +193,7 @@ jobs:
             git add deployments/helm/ims-kaas/values.yaml
             git add deployments/helm/ims-kaas/Chart.yaml
             git commit --allow-empty -m 'Automated values and version update from CircleCI [ci skip]'
-            GIT_SSH_COMMAND="ssh -v" git push origin master
+            GIT_SSH_COMMAND="ssh -vv" git push origin master
 
 workflows:
   version: 2
