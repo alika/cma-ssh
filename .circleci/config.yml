@@ -22,6 +22,9 @@ jobs:
   build-push:
     executor: docker-executor
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "33:02:76:0d:f2:82:9d:b7:7f:c8:c6:f1:28:a4:d3:5e"
       - checkout
       - setup_remote_docker
       - restore_cache:
@@ -62,6 +65,9 @@ jobs:
   update-chart:
     executor: yamlparse-executor
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "33:02:76:0d:f2:82:9d:b7:7f:c8:c6:f1:28:a4:d3:5e"
       - checkout
       - run:
           name: replace docker tags in chart
