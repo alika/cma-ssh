@@ -86,6 +86,7 @@ jobs:
           paths:
             - deployments
             - .versionfile
+            - .git
   lint-chart:
     executor: helm-executor 
     steps:
