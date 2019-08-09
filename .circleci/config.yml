@@ -170,6 +170,9 @@ jobs:
     steps:
       - attach_workspace:
           at: .
+      - add_ssh_keys:
+          fingerprints:
+            - "67:d8:af:8f:09:47:9d:c6:76:30:c0:ca:bf:ac:87:3b"
       - run:
           name: initialize helm
           command: | 
@@ -181,6 +184,16 @@ jobs:
           command: | 
             helm package --debug deployments/helm/ims-kaas
             curl -u ${HARBOR_ROBOT_LOGIN}:${HARBOR_ROBOT_PASSWORD} -F chart=@ims-kaas-$(cat .versionfile | tr -d '[:space:]').tgz ${HELM_REGISTRY_PUSH_ENPOINT} --show-error --fail
+      - run:
+          name: commit to github
+          command: |
+            git config user.email "circleci@cnct.io"
+            git config user.name "CircleCI"
+            git add deployments/helm/ims-kaas/values.yaml
+            git add deployments/helm/ims-kaas/Chart.yaml
+            git commit --allow-empty -m 'Automated values and version update from CircleCI [ci skip]'
+            git push origin master
+
 workflows:
   version: 2
   build-deploy:
