@@ -188,12 +188,14 @@ jobs:
       - run:
           name: commit to github
           command: |
+            mkdir -p ~/.ssh/ 
+            echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
             git config user.email "circleci@cnct.io"
             git config user.name "CircleCI"
             git add deployments/helm/ims-kaas/values.yaml
             git add deployments/helm/ims-kaas/Chart.yaml
             git commit --allow-empty -m 'Automated values and version update from CircleCI [ci skip]'
-            GIT_SSH_COMMAND="ssh -vv" git push origin master
+            git push origin master
 
 workflows:
   version: 2
