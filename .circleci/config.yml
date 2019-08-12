@@ -58,7 +58,7 @@ jobs:
             # login to docker registry, tag and push
             echo "${HARBOR_ROBOT_PASSWORD}" | docker login --username ${HARBOR_ROBOT_LOGIN} --password-stdin ${DOCKER_REGISTRY_URL}
             docker tag app ${DOCKER_REGISTRY_AND_USER}/ims-kaas:${tag}
-            docker push ${DOCKER_REGISTRY_AND_USER}/ims-kaas:$(cat .versionfile | tr -d '[:space:]')
+            docker push ${DOCKER_REGISTRY_AND_USER}/ims-kaas:${tag}
   update-chart:
     executor: yamlparse-executor
     steps:
