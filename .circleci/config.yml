@@ -176,6 +176,7 @@ jobs:
             helm test ims-kaas --debug
 
             # dump test logs
+            set +o pipefail
             kubectl get pods -o go-template \
               --template='{{range .items}}{{$name := .metadata.name}}{{range $key,$value := .metadata.annotations}}{{$name}} {{$key}}:{{$value}}+{{end}}{{end}}' \
               | tr '+' '\\n' | grep -e helm.sh/hook:.*test-success -e helm.sh/hook:.*test-failure | cut -d' ' -f1 | while read line; do kubectl logs $line; done
