@@ -38,6 +38,10 @@ spec:
           command: ["./ims-kaas"]
           args: ["--port", "{{ .Values.service.operator.targetPort }}", "--logtostderr", "--v", "{{ .Values.logLevel }}"]
           resources:
+{{- if .Values.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.pullSecret }}
+{{- end }}
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}
       nodeSelector:

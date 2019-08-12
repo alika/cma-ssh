@@ -118,7 +118,8 @@ jobs:
           command: |
             curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl
             chmod +x kubectl
-            sudo mv kubectl /usr/local/bin/mkdir -p ${HOME}/.kube
+            sudo mv kubectl /usr/local/bin/
+            mkdir -p ${HOME}/.kube
             touch ${HOME}/.kube/config
       - run:
           name: Setup minikube
@@ -133,6 +134,7 @@ jobs:
           name: Start minikube
           command: |
             sudo -E minikube start --vm-driver=none --cpus 2 --memory 2048 --kubernetes-version=${K8S_VERSION}
+            sudo chown circleci /home/circleci/.minikube/client.key
       - run:
           name: wait for minikube
           command: |
@@ -157,12 +159,23 @@ jobs:
             kubectl create clusterrolebinding tiller --clusterrole cluster-admin --serviceaccount=kube-system:tiller
             helm init --wait --service-account tiller 
             helm repo add --username=${HARBOR_ROBOT_LOGIN} --password=${HARBOR_ROBOT_PASSWORD} cnct ${HELM_REGISTRY_AND_USER}
+            helm repo update
       - run: 
           name: install chart in minikube cluster, run tests and print logs
           command: |
             helm dependency update --debug deployments/helm/ims-kaas
-            helm install deployments/helm/ims-kaas --wait --name ims-kaas
+
+            # create image pull secrets
+            kubectl create secret docker-registry regcred --docker-server=harbor.cnct.io --docker-username=${HARBOR_ROBOT_LOGIN} \
+              --docker-password=${HARBOR_ROBOT_PASSWORD} --docker-email=circleci@cnct.io
+
+            # install with pull secret set
+            helm install deployments/helm/ims-kaas --wait --name ims-kaas --set pullSecret=regcred
+            
+            # run helm tests
             helm test ims-kaas --debug
+
+            # dump test logs
             kubectl get pods -o go-template \
               --template='{{range .items}}{{\$name := .metadata.name}}{{range \$key,\$value := .metadata.annotations}}{{\$name}} {{\$key}}:{{\$value}}+{{end}}{{end}}' \
               | tr '+' '\\n' | grep -e helm.sh/hook:.*test-success -e helm.sh/hook:.*test-failure | cut -d' ' -f1 | while read line; do kubectl logs \$line; done

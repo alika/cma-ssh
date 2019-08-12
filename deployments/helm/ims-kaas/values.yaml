@@ -41,6 +41,8 @@ fullnameOverride: ''
 # install RBAC resources
 rbac: true
 
+pullSecret: 
+
 resources: {}
 nodeSelector: {}
 tolerations: []
