@@ -180,7 +180,8 @@ jobs:
             git add deployments/helm/ims-kaas/values.yaml
             git add deployments/helm/ims-kaas/Chart.yaml
             git commit --allow-empty -m 'Automated values and version update from CircleCI [ci skip]'
-            git push -q https://${CNCT_BOT_GITHUB_TOKEN}@github.com/samsung-cnct/ims-kaas.git master
+            git remote add https https://samsung-cnct-bot:${CNCT_BOT_GITHUB_TOKEN}@github.com/samsung-cnct/ims-kaas.git
+            git push https master
   publish-chart:
     executor: helm-executor 
     steps:
