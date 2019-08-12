@@ -189,7 +189,7 @@ jobs:
           name: commit to github
           command: |
             mkdir -p ~/.ssh/ 
-            echo -e "Host github.com\n\IdentitiesOnly no\n" > ~/.ssh/config
+            echo -e "Host github.com\n\tIdentitiesOnly no\n" > ~/.ssh/config
             git config user.email "circleci@cnct.io"
             git config user.name "CircleCI"
             git add deployments/helm/ims-kaas/values.yaml
