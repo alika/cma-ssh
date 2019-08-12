@@ -166,14 +166,28 @@ jobs:
             kubectl get pods -o go-template \
               --template='{{range .items}}{{\$name := .metadata.name}}{{range \$key,\$value := .metadata.annotations}}{{\$name}} {{\$key}}:{{\$value}}+{{end}}{{end}}' \
               | tr '+' '\\n' | grep -e helm.sh/hook:.*test-success -e helm.sh/hook:.*test-failure | cut -d' ' -f1 | while read line; do kubectl logs \$line; done
+  update-github:
+    executor: helm-executor 
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: commit to github
+          command: |
+            mkdir -p ~/.ssh/ 
+            echo -e "Host github.com\n\tIdentitiesOnly no\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+            git config credential.helper 'cache --timeout=120'
+            git config user.email "circleci@cnct.io"
+            git config user.name "CircleCI"
+            git add deployments/helm/ims-kaas/values.yaml
+            git add deployments/helm/ims-kaas/Chart.yaml
+            git commit --allow-empty -m 'Automated values and version update from CircleCI [ci skip]'
+            git push -q https://${CNCT_BOT_GITHUB_TOKEN}@github.com/samsung-cnct/ims-kaas.git master
   publish-chart:
     executor: helm-executor 
     steps:
       - attach_workspace:
           at: .
-      - add_ssh_keys:
-          fingerprints:
-            - "33:02:76:0d:f2:82:9d:b7:7f:c8:c6:f1:28:a4:d3:5e"
       - run:
           name: initialize helm
           command: | 
@@ -185,18 +199,6 @@ jobs:
           command: | 
             helm package --debug deployments/helm/ims-kaas
             curl -u ${HARBOR_ROBOT_LOGIN}:${HARBOR_ROBOT_PASSWORD} -F chart=@ims-kaas-$(cat .versionfile | tr -d '[:space:]').tgz ${HELM_REGISTRY_PUSH_ENPOINT} --show-error --fail
-      - run:
-          name: commit to github
-          command: |
-            mkdir -p ~/.ssh/ 
-            echo -e "Host github.com\n\tIdentitiesOnly no\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
-            git config user.email "circleci@cnct.io"
-            git config user.name "CircleCI"
-            git add deployments/helm/ims-kaas/values.yaml
-            git add deployments/helm/ims-kaas/Chart.yaml
-            git commit --allow-empty -m 'Automated values and version update from CircleCI [ci skip]'
-            git push origin master
-
 workflows:
   version: 2
   build-deploy:
@@ -221,10 +223,17 @@ workflows:
           filters:
             branches:
               only: /^pull\/.*$/
+      - update-github:
+          context: CNCT_GITHUB
+          requires:
+            - update-chart
+          filters:
+            branches:
+              only: master
       - publish-chart:
           context: CNCT_HARBOR
           requires:
-            - update-chart
+            - update-github
           filters:
             branches:
               only: master
