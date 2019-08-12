@@ -1,8 +1,8 @@
 apiVersion: v1
-appVersion: 0.1.115
+appVersion: 0.1.116
 description: A Helm chart for CMA SSH provisioner
 name: ims-kaas
-version: 0.1.115
+version: 0.1.116
 keywords:
 - cma
 - ssh
