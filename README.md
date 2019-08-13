@@ -1,5 +1,5 @@
 # ims-kaas
-[![CircleCI](https://circleci.com/gh/samsung-cnct/ims-kaas/tree/master.svg?style=svg&circle-token=43855a16154d0ded4dda8b3fa08f3dd4b2298a69)](https://circleci.com/gh/samsung-cnct/ims-kaas/tree/master)
+[![CircleCI](https://circleci.com/gh/samsung-cnct/ims-kaas/tree/master.svg?style=shield&circle-token=43855a16154d0ded4dda8b3fa08f3dd4b2298a69)](https://circleci.com/gh/samsung-cnct/ims-kaas/tree/master)
 
 # What is this?
 
