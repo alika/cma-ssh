@@ -21,6 +21,10 @@ spec:
         app: {{ include "ims-kaas.name" . }}
         release: {{ .Release.Name }}
     spec:
+      {{- if .Values.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.pullSecret }}
+      {{- end }}
       {{- if .Values.rbac }}
       serviceAccountName: {{ include "ims-kaas.name" . }}
       {{- end }}
