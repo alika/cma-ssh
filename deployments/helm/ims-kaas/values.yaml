@@ -3,7 +3,7 @@ logLevel: 8
 images:
    operator:
       repository: harbor.cnct.io/cnct/ims-kaas
-      tag: 0.1.116
+      tag: 0.1.117
       pullPolicy: Always
 
 # installation settings
