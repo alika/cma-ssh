@@ -17,10 +17,13 @@ limitations under the License.
 package cmd
 
 import (
+	golangErrors "errors"
 	"flag"
 	"fmt"
+	"github.com/spf13/pflag"
 	"net"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/soheilhy/cmux"
@@ -49,44 +52,77 @@ import (
 )
 
 const (
-	apiURLKey     = "api_url"
-	apiVersionKey = "api_version"
-	apiKeyKey     = "api_key"
+	viperPrefix 	= "IMS_KAAS"
+	maasApiURL		= "maas_api_url"
+	maasApiVersion	= "maas_api_version"
+	maasApiKey		= "maas_api_key"
+	kaasPort		= "port"
 )
 
 var (
 	rootCmd = &cobra.Command{
 		Use:   "ims-kaas",
-		Short: "CMA SSH Operator",
-		Long:  `CMA SSH provider operator`,
+		Short: "KaaS Operator",
+		Long:  `Kubernetes as a Service operator`,
 		Run: func(cmd *cobra.Command, args []string) {
 			operator(cmd)
+		},
+		// We use this instead of Cobra's 'MarkFlagRequired()'
+		// because 'MarkFlagRequired()' breaks Viper environment variable binding
+		// https://github.com/spf13/viper/issues/397
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			requiredError := false
+
+			// DO NOT include flags that will have a valid default value
+			requiredFlags := map[string]bool {
+				maasApiURL: true,
+				maasApiKey: true,
+			}
+			flagNames := ""
+
+			cmd.Flags().VisitAll(func(flag *pflag.Flag) {
+				flagRequired := requiredFlags[flag.Name]
+
+				if flagRequired && !flag.Changed && ((viper.Get(flag.Name) == nil) || (viper.Get(flag.Name) == flag.DefValue)) {
+					requiredError = true
+					flagNames += flag.Name + " "
+				}
+			})
+
+			if requiredError {
+				return golangErrors.New("Required flags `" + strings.Trim(flagNames, " ") + "` have not been set")
+			}
+
+			return nil
 		},
 	}
 )
 
 // init configures input and output.
 func init() {
-	rootCmd.Flags().Int("port", 9020, "Port to listen on")
+	rootCmd.Flags().Int(kaasPort, 9020, "Port to listen on")
+	rootCmd.Flags().String(maasApiURL, "", "Maas api url")
+	rootCmd.Flags().String(maasApiVersion, "2", "Maas api version")
+	rootCmd.Flags().String(maasApiKey, "", "Maas api key")
 
-	viper.SetEnvPrefix("maas")
-	viper.BindEnv(apiURLKey)
-	viper.BindEnv(apiVersionKey)
-	viper.BindEnv(apiKeyKey)
+	klogFlagSet := &flag.FlagSet{}
+	klog.InitFlags(klogFlagSet)
+
+	rootCmd.Flags().AddGoFlagSet(flag.CommandLine)
+	rootCmd.Flags().AddGoFlagSet(klogFlagSet)
+
+	viper.SetEnvPrefix(viperPrefix)
+
+	if err := viper.BindPFlags(rootCmd.Flags()); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	viper.AutomaticEnv()
 }
 
 // Execute runs the root cobra command
 func Execute() {
-	klogFlagSet := &flag.FlagSet{}
-	klog.InitFlags(klogFlagSet)
-	rootCmd.Flags().AddGoFlagSet(flag.CommandLine)
-	rootCmd.Flags().AddGoFlagSet(klogFlagSet)
-	err := flag.CommandLine.Parse([]string{})
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
 	log.SetLogger(klogr.New())
 
 	if err := rootCmd.Execute(); err != nil {
@@ -134,9 +170,9 @@ func operator(cmd *cobra.Command) {
 	}
 
 	// TODO: Determine if the Cluster controller needs access to MAAS
-	apiURL := viper.GetString(apiURLKey)
-	apiVersion := viper.GetString(apiVersionKey)
-	apiKey := viper.GetString(apiKeyKey)
+	apiURL := viper.GetString(maasApiURL)
+	apiVersion := viper.GetString(maasApiVersion)
+	apiKey := viper.GetString(maasApiKey)
 	maasClient, err := maas.NewClient(&maas.NewClientParams{ApiURL: apiURL, ApiVersion: apiVersion, ApiKey: apiKey})
 	if err != nil {
 		klog.Errorf("unable to create MAAS client for machine controller: %q", err)

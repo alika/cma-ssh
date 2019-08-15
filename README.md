@@ -25,7 +25,7 @@ instructions and then move on.
 1. Be sure and create a maas API key and know how to obtain for later in this
 document. You can [generate an API Key][generate-an-api-key] using the MAAS GUI.
 
-## cms-ssh usage
+## ims-kaas usage
 
 ### Building ims-kaas
 
