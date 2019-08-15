@@ -20,7 +20,7 @@ kubectl apply -f crd
 # build and run ims-kaas
 cd $GOPATH/src/github.com/samsung-cnct/ims-kaas
 go1.12.4 build -o ims-kaas cmd/ims-kaas/main.go
-MAAS_API_URL=http://192.168.2.24:5240/MAAS MAAS_API_VERSION_KEY=2.0 MAAS_API_KEY=<your maas key> ./ims-kaas --logtostderr
+IMS_KAAS_MAAS_API_URL=http://192.168.2.24:5240/MAAS IMS_KAAS_MAAS_API_KEY=<your maas key> ./ims-kaas --logtostderr
 
 # run the e2e script
 cd $GOPATH/src/github.com/samsung-cnct/ims-kaas/test/e2e

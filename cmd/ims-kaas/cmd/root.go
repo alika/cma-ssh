@@ -102,7 +102,7 @@ var (
 func init() {
 	rootCmd.Flags().Int(kaasPort, 9020, "Port to listen on")
 	rootCmd.Flags().String(maasApiURL, "", "Maas api url")
-	rootCmd.Flags().String(maasApiVersion, "2", "Maas api version")
+	rootCmd.Flags().String(maasApiVersion, "2.0", "Maas api version")
 	rootCmd.Flags().String(maasApiKey, "", "Maas api key")
 
 	klogFlagSet := &flag.FlagSet{}

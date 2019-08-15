@@ -33,11 +33,11 @@ spec:
           image: "{{ .Values.images.operator.repository }}:{{ .Values.images.operator.tag }}"
           imagePullPolicy: {{ .Values.images.operator.pullPolicy }}
           env:
-            - name: MAAS_API_URL
+            - name: IMS_KAAS_MAAS_API_URL
               value: "{{ .Values.maas.apiURL }}"
-            - name: MAAS_API_VERSION
+            - name: IMS_KAAS_MAAS_API_VERSION
               value: "{{ .Values.maas.apiVersion }}"
-            - name: MAAS_API_KEY
+            - name: IMS_KAAS_MAAS_API_KEY
               value: "{{ .Values.maas.apiKey }}"
           command: ["./ims-kaas"]
           args: ["--port", "{{ .Values.service.operator.targetPort }}", "--logtostderr", "--v", "{{ .Values.logLevel }}"]
