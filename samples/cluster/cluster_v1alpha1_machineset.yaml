@@ -3,7 +3,7 @@ kind: CnctMachineSet
 metadata:
   labels:
     controller-tools.k8s.io: "1.0"
-  name: worker-standard
+  name: worker-standard1
   namespace: cluster
 spec:
   # Add fields here
@@ -11,11 +11,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      nodepool: standard
+      nodepool: worker-standard1
   machineTemplate:
     metadata:
       labels:
-        nodepool: standard
+        nodepool: worker-standard1
     spec:
       roles:
         - worker

@@ -4,7 +4,7 @@
 # What is this?
 
 `ims-kaas` is a k8s operator which manages the lifecycle of Kubernetes "managed"
-clusters (i.e. `CnctCluster` resources) and machines (`CnctMachine`). Currently,
+clusters (i.e. `CnctCluster` resources), machinesets (`CnctMachineSet`), and machines (`CnctMachine`). Currently,
 this tool instantiates a managed cluster using the MaaS API.
 
 In order for this tool to work, one must manage some pre-requisites first:
@@ -62,6 +62,21 @@ you need to build this project in the appropriate `$GOPATH` location. Specifical
 
 ### Running ims-kaas
 
+ims-kaas can be run locally if you have access to the Maas Lab (i.e. login to the Maas lab VPN if you are remote).
+We also have a helm chart to install ims-kaas into a kubernetes cluster
+
+#### To run ims-kaas locally for development
+```bash
+export IMS_KAAS_MAAS_API_URL=http://192.168.2.24:5240/MAAS/
+export IMS_KAAS_MAAS_API_VERSION=2
+export IMS_KAAS_MAAS_API_KEY=<your maas api key>
+
+minikube start
+make
+./ims-kaas
+```
+#### To install ims-kaas in a kubernetes cluster
+
 The Kubernetes cluster on which the `ims-kaas` is installed must
 have network access to a MAAS server. Within the CNCT lab this
 means you must be in the Seattle office or logged onto the VPN.
@@ -92,20 +107,35 @@ kubectl get pods --watch
 
 Either kubectl or the Swagger UI REST interface can be used to create Kubernetes clusters with ims-kaas.  This section will focus on using kubectl.
 
-A cluster definition consists of two kinds of Kubernetes Custom Resource Definitions (CRDs):
-- [cnctcluster CRD](https://github.com/samsung-cnct/ims-kaas/blob/master/crd/cluster_v1alpha1_cnctcluster.yaml), and
-- [cnctmachine CRD](https://github.com/samsung-cnct/ims-kaas/blob/master/crd/cluster_v1alpha1_cnctmachine.yaml)
+A cluster definition consists of three kinds of Kubernetes Custom Resource Definitions (CRDs):
+- [cnctcluster CRD](https://github.com/samsung-cnct/ims-kaas/blob/master/crd/cluster_v1alpha1_cnctcluster.yaml),
+- [cnctmachine CRD](https://github.com/samsung-cnct/ims-kaas/blob/master/crd/cluster_v1alpha1_cnctmachine.yaml),
+- [cnctmachineset CRD](https://github.com/samsung-cnct/ims-kaas/blob/master/crd/cluster_v1alpha1_cnctmachineset.yaml)
 
-A single cluster definition consists of:
-- one [cnctcluster resource](https://github.com/samsung-cnct/ims-kaas/blob/master/samples/cluster/cluster_v1alpha1_cluster.yaml), and
-- one or more [cnctmachine resources](https://github.com/samsung-cnct/ims-kaas/blob/master/samples/cluster/cluster_v1alpha1_machine.yaml) to define master and worker nodes.
+To create a single cluster apply these manifests to define:
+- one [cnctcluster resource](https://github.com/samsung-cnct/ims-kaas/blob/master/samples/cluster/cluster_v1alpha1_cluster.yaml),
+- one [cnctmachine resource](https://github.com/samsung-cnct/ims-kaas/blob/master/samples/cluster/cluster_v1alpha1_machine.yaml) to define the master node,
+- one or more [cnctmachineset resources](https://github.com/samsung-cnct/ims-kaas/blob/master/samples/cluster/cluster_v1alpha1_machineset.yaml) to define each worker node pool.
 
 ### Namespace per cluster
 
 The resources for a single cluster definition must be in the same namespace.
 You cannot define two clusters in the same namespace, each cluster requires its own namespace.
-One naming option is to use unique cluster names and define a namespace that matches the cluster name.
+The preferred naming option is to use unique cluster names and define a namespace that matches the cluster name.
 
+### Node Pool
+The cnctmachineset resource defines each worker node pool.  The `replicas` field specifies the number of worker nodes in the pool.
+The ims-kaas machineset controller is similar to a kubernetes replicaSet controller.  It creates the specified number of cnctmachines, and labels them with the specified labels.  The specified label for a cnctmachineset node pool is what is used to label the cnctmachines that are in the same pool.  This label should be unique per node pool within a cluster - we recommend using the cnctmachineset name for the label.  The replica count of cnctmachines in the node pool can be scaled up and down.
+
+#### Deleting Nodes in a Node Pool
+Scaling down the replica count will delete cnctmachines labeled with the node pool specified label in a random order.
+
+#### Deleting a Specific Node in a Node Pool
+If a specific cnctmachine in the worker node pool needs to be deleted, you must add an annotation to the cnctmachine with this format: `cluster.k8s.io/delete-machine: true`, and then scale down the replica count in the corresponding (ownerReference) cnctmachineset.
+
+```bash
+kubectl annotate cnctmachine <cnctmachine name> cluster.k8s.io/delete-machine=true -n <cluster name>
+```
 ### Example using samples for a cluster named cluster1
 
 Create a namespace for the cluster definition resources:
@@ -120,19 +150,25 @@ Copy the resource samples to your own cluster dir and modify them:
 mkdir ~/cluster1
 cp samples/cluster/cluster_v1alpha1_cluster.yaml ~/cluster1/cluster.yaml
 cp samples/cluster/cluster_v1alpha1_machine.yaml ~/cluster1/machines.yaml
+cp samples/cluster/cluster_v1alpha1_machineset.yaml ~/cluster1/machineset.yaml
 
 vi ~/cluster1/cluster.yaml
 #Modify the name, namespace, and optionally kubernetes version
 
-vi ~/cluster1/machines.yaml
+vi ~/cluster1/machine.yaml
 # Modify the name, namespace and instanceType (to match MaaS tags desired)
+
+vi ~/cluster1/machineset.yaml
+# Add a nodepool name, the replica count, and the label that is unique for this nodepool
+# tip: use the nodepool name for the label
 ```
 Using kubectl, apply a cluster manifest, and one or more machine manifests to
 create a kubernetes cluster:
 
 ```bash
 kubectl apply -f ~/cluster1/cluster.yaml
-kubectl apply -f ~/cluster1/machines.yaml
+kubectl apply -f ~/cluster1/machine.yaml
+kubectl apply -f ~/cluster1/machineset.yaml
 ```
 
 ## How instanceType is mapped to MaaS machine tags
